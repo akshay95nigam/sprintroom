@@ -1,0 +1,9 @@
+{
+  "main": "server.js",
+  "output": "dist/SprintRoom/SprintRoom.exe",
+  "executable": ".cache/node.exe",
+  "assets": { "index.html": "web/index.html" },
+  "disableExperimentalSEAWarning": true,
+  "useSnapshot": false,
+  "useCodeCache": false
+}

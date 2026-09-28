@@ -1,34 +1,48 @@
 # Sprint Room
 
-A standalone scrum team tool for Windows: team dashboard, sprint and meeting schedule, retrospective board, and scrum poker where everyone votes on a story and the average becomes its story points.
+A scrum team tool for Windows: team dashboard, sprint and meeting schedule, retrospective board with an Excel report, and scrum poker where the average of everyone's votes becomes the story points.
 
-No installation, no accounts, no internet service. One person runs it, and the rest of the team joins from their browsers on the same network.
+It works offline, installs nothing and needs no accounts. The scrum master can run it on their own computer and share their screen, or teammates on the same network can join from their browsers.
 
 ## Download
 
-**[SprintRoom-Windows.zip](SprintRoom-Windows.zip)** (64-bit Windows 10/11)
+**[Latest release: Sprint Room 1.1.0 for Windows](https://github.com/akshay95nigam/sprintroom/releases/latest)** (64-bit Windows 10/11, 37 MB zip)
+
+`SprintRoom-Windows.zip` in this repository is the earlier 1.0.0 build (Go, 3 MB). It doesn't have the screen-share scrum poker or the Excel report.
 
 ## Run it
 
 1. Unzip the folder somewhere you can write to, such as `Documents\SprintRoom`.
 2. Double-click `SprintRoom.exe`. Your browser opens Sprint Room, along with a console window. Keep that window open while you use the app; close it to stop.
-3. Click **Invite team** and share the address it shows (like `http://192.168.1.20:4280`). Teammates on the same office network or VPN open it in any browser and click **Who are you?** to pick their name.
+3. Either share your screen in Teams, Zoom or Meet, or click **Invite team** and share the address it shows (like `http://192.168.1.20:4280`) with teammates on the same network or VPN.
 
 On first launch Windows may show:
 
 - **"Windows protected your PC"**: the program isn't code-signed. Click **More info → Run anyway**.
-- **A firewall prompt**: allow **Private networks** so teammates can connect.
+- **A firewall prompt**: allow **Private networks** if teammates will connect from their own devices, or click **Cancel** if you'll only share your screen.
 
 ## Features
 
 - **Dashboard**: current sprint, progress, next meeting countdown, team availability, sprint load against capacity, and the last sprint's retrospective with open action items.
 - **Team**: members with role, availability and capacity.
 - **Sprints & meetings**: sprint dates and goal, plus planning, daily stand-up, review and retrospective times.
-- **Retrospective**: went well / to improve / action items, with +1 voting, owners and done tracking.
-- **Scrum poker**: Fibonacci deck (0, ½, 1, 2, 3, 5, 8, 13, 21, ?, ☕). Votes stay hidden until revealed; the average becomes the story's points (or round to the nearest card). Record votes for people without a laptop.
+- **Retrospective**: went well / to improve / action items, with +1 voting, owners and done tracking. **Finish retrospective & download Excel** produces an `.xlsx` report (Summary, Retro notes, Action items, Story estimates, Team), for one sprint or all of them.
+- **Scrum poker**: Fibonacci deck (0, ½, 1, 2, 3, 5, 8, 13, 21, ?, ☕). In screen-share mode the scrum master asks each person in turn and clicks their card; cards stay face down until revealed. Or everyone votes on their own device. The average becomes the story's points, or round to the nearest card.
 
 ## Data
 
-Everything is saved in `sprint-room-data.json` next to `SprintRoom.exe`. Use **Download backup** at the bottom of the page to keep a copy. Anyone who can reach the address can view and edit, so run it only on a trusted network.
+Everything is saved in `sprint-room-data.json` next to `SprintRoom.exe`. Use **Download backup** at the bottom of the page to keep a copy. When teammates connect over the network, anyone who can reach the address can view and edit, so only do that on a trusted network.
 
-See `README.txt` inside the zip for troubleshooting.
+## Build from source
+
+The app is a single Node.js file with no npm dependencies.
+
+- `npm start` runs it on any machine with Node.js 22 or later.
+- `npm run build:win` (on macOS or Linux) produces `dist/SprintRoom-Windows.zip`. It downloads official Node.js builds from nodejs.org, checks their SHA-256, and packages the app as a Node.js single executable application.
+
+| File | Purpose |
+| --- | --- |
+| `server.js` | HTTP server, JSON API, live updates, file storage and the Excel report |
+| `web/index.html` | The web app (HTML, CSS and JavaScript in one file) |
+| `sea-config.json`, `build.sh` | Windows single-executable build |
+| `README.txt` | End-user instructions shipped inside the zip |

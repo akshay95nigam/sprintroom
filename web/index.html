@@ -1,0 +1,1008 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sprint Room</title>
+<style>
+:root{
+  --ground:#EDF0F4; --surface:#FFFFFF; --surface-2:#F4F6F9; --line:#D8DEE6; --line-2:#E6EAF0;
+  --ink:#16202B; --muted:#5B6878; --accent:#2B59C3; --accent-ink:#FFFFFF; --accent-soft:#E3EAFB;
+  --good:#23784A; --good-soft:#E1F2E7; --warn:#9A5C08; --warn-soft:#FBEFD9; --bad:#B3372F; --bad-soft:#F8E3E1;
+  --av-l:86%; --shadow:0 1px 2px rgba(22,32,43,.06),0 6px 18px rgba(22,32,43,.06);
+  --back-a:#2B59C3; --back-b:#3A68D2;
+  --display:"Segoe UI Variable Display","Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --body:"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --mono:"Cascadia Mono",Consolas,ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ground:#0E1319; --surface:#161D25; --surface-2:#1C242E; --line:#2A3440; --line-2:#222B36;
+    --ink:#E5EAF0; --muted:#8F9BAA; --accent:#7D9CFF; --accent-ink:#0E1319; --accent-soft:#1F2A45;
+    --good:#5CC98A; --good-soft:#15291F; --warn:#E3A54A; --warn-soft:#2C2112; --bad:#F07B72; --bad-soft:#321A18;
+    --av-l:30%; --shadow:0 1px 2px rgba(0,0,0,.3);
+    --back-a:#2F4FA0; --back-b:#3B5CB0;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ground:#0E1319; --surface:#161D25; --surface-2:#1C242E; --line:#2A3440; --line-2:#222B36;
+  --ink:#E5EAF0; --muted:#8F9BAA; --accent:#7D9CFF; --accent-ink:#0E1319; --accent-soft:#1F2A45;
+  --good:#5CC98A; --good-soft:#15291F; --warn:#E3A54A; --warn-soft:#2C2112; --bad:#F07B72; --bad-soft:#321A18;
+  --av-l:30%; --shadow:0 1px 2px rgba(0,0,0,.3);
+  --back-a:#2F4FA0; --back-b:#3B5CB0;
+}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;padding-inline:16px;padding-block:0 48px}
+.app{max-width:1180px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h2{font-size:1.35rem;font-weight:700}
+h3{font-size:1rem;font-weight:700}
+.eyebrow{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.muted{color:var(--muted)}
+.mono{font-family:var(--mono);font-size:.85em}
+.num{font-variant-numeric:tabular-nums}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--ground);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px;padding-block:18px 12px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{width:34px;height:44px;border-radius:7px;background:repeating-linear-gradient(135deg,var(--back-a) 0 6px,var(--back-b) 6px 12px);display:grid;place-items:center;color:#fff;font-family:var(--display);font-weight:700;font-size:1.05rem;box-shadow:var(--shadow);transform:rotate(-6deg);flex:none}
+.brand h1{font-size:1.4rem;font-weight:700;overflow-wrap:anywhere}
+.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;max-width:100%}
+.tab{border:0;background:transparent;padding:8px 12px;border-radius:8px;color:var(--muted);font-weight:600;white-space:nowrap}
+.tab:hover{color:var(--ink);background:var(--surface-2)}
+.tab[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+
+/* shared bits */
+main{padding-top:20px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 14px;font-weight:600;display:inline-flex;align-items:center;gap:6px;line-height:1.2}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn.sm{padding:5px 10px;font-size:.85rem}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--muted)}
+.btn.ghost:hover{color:var(--ink);background:var(--surface-2)}
+.btn.danger{color:var(--bad)}
+.btn.danger.armed{background:var(--bad);border-color:var(--bad);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.link{border:0;background:none;padding:0;color:var(--accent);font-weight:600}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:.75rem;font-weight:600;padding:2px 9px;border-radius:99px;white-space:nowrap}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.pill.good{background:var(--good-soft);color:var(--good)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.info{background:var(--accent-soft);color:var(--accent)}
+.pill.plain{background:var(--surface-2);color:var(--muted)}
+.av{--h:210;width:34px;height:34px;border-radius:50%;display:inline-grid;place-items:center;flex:none;background:hsl(var(--h) 55% var(--av-l));color:var(--ink);font-weight:700;font-size:.8rem;letter-spacing:.02em}
+.av.lg{width:44px;height:44px;font-size:.95rem}
+.av.xs{width:24px;height:24px;font-size:.62rem}
+.empty{padding:28px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}
+input[type=text],input[type=number],input[type=date],input[type=time],input[type=datetime-local],select,textarea{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0}
+textarea{resize:vertical;min-height:70px}
+label.field{display:grid;gap:4px;font-size:.85rem;font-weight:600;color:var(--muted)}
+.bar{height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden;border:1px solid var(--line-2)}
+.bar>span{display:block;height:100%;background:var(--accent);border-radius:99px}
+.bar.over>span{background:var(--warn)}
+
+.banner{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;background:var(--accent-soft);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-top:16px;font-size:.9rem}
+.banner .grow{flex:1 1 240px}
+.notice{margin-top:16px;padding:10px 14px;border-radius:10px;background:var(--warn-soft);color:var(--warn);font-size:.9rem}
+
+/* dashboard */
+.dash{display:grid;gap:16px;grid-template-columns:repeat(12,minmax(0,1fr))}
+.dash>.span-8{grid-column:span 8}.dash>.span-4{grid-column:span 4}.dash>.span-12{grid-column:span 12}.dash>.span-6{grid-column:span 6}
+@media (max-width:860px){.dash>*{grid-column:span 12 !important}}
+.hero h2{font-size:1.7rem}
+.hero .goal{margin:6px 0 14px;max-width:62ch}
+.hero-meta{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:.88rem;color:var(--muted);margin-bottom:10px}
+.next{display:flex;flex-direction:column;gap:6px;background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.next .eyebrow{color:inherit;opacity:.8}
+.next .when{font-family:var(--display);font-size:1.6rem;font-weight:700;line-height:1.1}
+.next .what{font-weight:600;font-size:1.05rem}
+.ceremonies{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.ceremonies li{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:9px 0;border-bottom:1px solid var(--line-2);align-items:center}
+.ceremonies li:last-child{border-bottom:0}
+.ceremonies .t{font-weight:600}
+.ceremonies .d{font-size:.85rem;color:var(--muted)}
+.members{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.member{display:flex;gap:10px;align-items:center;padding:10px;border:1px solid var(--line-2);border-radius:10px;background:var(--surface-2);min-width:0}
+.member .n{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.member .r{font-size:.8rem;color:var(--muted)}
+.member>div{min-width:0;flex:1}
+.load-row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px}
+.big{font-family:var(--display);font-size:2rem;font-weight:700;line-height:1}
+.retro-sum{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:760px){.retro-sum{grid-template-columns:1fr}}
+.retro-sum h4{margin:0 0 8px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.retro-sum ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.retro-sum li{font-size:.9rem;padding:8px 10px;border-radius:8px;background:var(--surface-2);display:flex;gap:8px;align-items:flex-start;justify-content:space-between}
+.k-well{color:var(--good)}.k-improve{color:var(--warn)}.k-action{color:var(--accent)}
+.votes-chip{font-family:var(--mono);font-size:.75rem;color:var(--muted);white-space:nowrap}
+
+/* team + sprints lists */
+.rows{display:grid;gap:10px}
+.row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.row .title{font-weight:600;font-size:1.02rem}
+.row .sub{font-size:.86rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 14px}
+.row .right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+@media (max-width:600px){.row{grid-template-columns:auto minmax(0,1fr)}.row .right{grid-column:1/-1;justify-content:flex-start}}
+.sprint-badge{width:52px;height:52px;border-radius:10px;background:var(--surface-2);border:1px solid var(--line-2);display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:1.1rem}
+.sprint-badge.current{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+
+/* retro */
+.retro-top{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
+.retro-top select{width:auto;min-width:220px}
+.retro-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px}
+@media (max-width:900px){.retro-cols{grid-template-columns:1fr}}
+.rcol{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;border-top:4px solid var(--c)}
+.rcol[data-kind=well]{--c:var(--good)}.rcol[data-kind=improve]{--c:var(--warn)}.rcol[data-kind=action]{--c:var(--accent)}
+.rcol h3{display:flex;justify-content:space-between;align-items:baseline}
+.rcol form{display:grid;gap:6px}
+.rcol form .inline{display:flex;gap:6px}
+.rcol ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.note{background:var(--surface-2);border:1px solid var(--line-2);border-radius:9px;padding:10px 12px;display:grid;gap:8px}
+.note .txt{overflow-wrap:anywhere;white-space:pre-wrap}
+.note .meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.8rem;color:var(--muted)}
+.note .meta .grow{flex:1}
+.note.done .txt{text-decoration:line-through;color:var(--muted)}
+.vote{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:2px 9px;font-size:.78rem;font-weight:600;font-family:var(--mono)}
+.vote.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.x{border:0;background:none;color:var(--muted);padding:2px 6px;border-radius:6px;font-size:.8rem}
+.x:hover{color:var(--bad);background:var(--bad-soft)}
+.x.armed{color:#fff;background:var(--bad)}
+.check{display:inline-flex;align-items:center;gap:5px;cursor:pointer}
+.note select{width:auto;padding:2px 6px;font-size:.8rem}
+
+/* poker */
+.poker-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}
+@media (max-width:920px){.poker-grid{grid-template-columns:1fr}}
+.poker-main,.poker-side{display:grid;gap:16px;min-width:0}
+.story-now{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:flex-start}
+.story-now .key{font-family:var(--mono);font-size:.82rem;color:var(--accent)}
+.story-now h2{font-size:1.5rem;overflow-wrap:anywhere}
+.story-actions{display:flex;gap:8px;flex-wrap:wrap}
+.deck{display:flex;flex-wrap:wrap;gap:10px}
+.pcard{width:62px;height:88px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);font-family:var(--display);font-weight:700;font-size:1.5rem;display:grid;place-items:center;transition:transform .15s ease,box-shadow .15s ease,background .15s;box-shadow:var(--shadow);position:relative}
+.pcard small{position:absolute;top:5px;left:7px;font-size:.62rem;font-family:var(--mono);color:var(--muted);font-weight:500}
+.pcard:hover:not(:disabled){transform:translateY(-4px)}
+.pcard.sel{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);transform:translateY(-8px)}
+.pcard.sel small{color:inherit;opacity:.7}
+.pcard:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.voters{display:flex;flex-wrap:wrap;gap:14px}
+.voter{display:grid;justify-items:center;gap:6px;width:78px;text-align:center}
+.voter .nm{font-size:.78rem;font-weight:600;line-height:1.2;overflow-wrap:anywhere}
+.voter .tag{font-size:.68rem;color:var(--muted)}
+.vcard{width:52px;height:74px;border-radius:9px;display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:1.3rem;perspective:600px}
+.vcard.back{background:repeating-linear-gradient(135deg,var(--back-a) 0 6px,var(--back-b) 6px 12px);box-shadow:var(--shadow)}
+.vcard.face{background:var(--surface);border:1.5px solid var(--accent);color:var(--ink);box-shadow:var(--shadow);animation:flip .45s ease both}
+.vcard.wait{border:1.5px dashed var(--line);color:var(--muted);font-size:.8rem;font-family:var(--body);font-weight:500}
+.vcard.hi{border-color:var(--warn);color:var(--warn)}
+@keyframes flip{from{transform:rotateY(90deg)}to{transform:rotateY(0)}}
+@media (prefers-reduced-motion:reduce){.vcard.face{animation:none}.pcard{transition:none}}
+.result{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:center;margin-top:18px;padding-top:18px;border-top:1px solid var(--line-2)}
+@media (max-width:560px){.result{grid-template-columns:1fr}}
+.final{display:grid;gap:4px;min-width:150px}
+.final .big{font-size:3rem}
+.dist{display:grid;gap:5px}
+.dist .d{display:grid;grid-template-columns:34px minmax(0,1fr) 22px;gap:8px;align-items:center;font-size:.82rem}
+.dist .d b{font-family:var(--display);text-align:right}
+.dist .track{height:14px;background:var(--surface-2);border-radius:4px;overflow:hidden}
+.dist .track span{display:block;height:100%;background:var(--accent);border-radius:4px}
+.save-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:var(--surface);padding:6px 10px;font-size:.85rem;font-weight:600;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
+.side-form{display:grid;gap:8px}
+.side-form .inline{display:grid;grid-template-columns:minmax(0,1fr) 90px auto;gap:6px}
+.stories{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.stories li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center;padding:8px 10px;border-radius:8px;background:var(--surface-2)}
+.stories .k{font-family:var(--mono);font-size:.75rem;color:var(--accent)}
+.stories .tt{font-size:.88rem;overflow-wrap:anywhere}
+.pts{font-family:var(--display);font-weight:700;font-size:1.05rem;min-width:38px;text-align:right}
+.hint{font-size:.82rem;color:var(--muted);margin:8px 0 0}
+.linkme{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--accent-soft);border-radius:8px;padding:8px 10px;margin-bottom:12px;font-size:.88rem}
+.linkme select{width:auto}
+
+/* sheet */
+.sheet{position:fixed;inset:0;z-index:20;background:rgba(10,15,22,.45);display:grid;place-items:center;padding:16px}
+.sheet-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;width:min(520px,100%);max-height:calc(100% - 32px);overflow:auto;padding:20px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.sheet-card h2{margin-bottom:14px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fields .full{grid-column:1/-1}
+@media (max-width:480px){.fields{grid-template-columns:1fr}}
+.sheet-actions{display:flex;gap:8px;margin-top:18px;align-items:center}
+.sheet-actions .grow{flex:1}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--ground);padding:9px 16px;border-radius:9px;font-size:.9rem;font-weight:500;z-index:30;max-width:calc(100% - 32px)}
+</style>
+<style>
+html{color-scheme:light}
+body{margin:0}
+[hidden]{display:none!important}
+.top-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.me-btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:3px 12px 3px 3px;font-weight:600;font-size:.85rem}
+.me-btn .av{width:26px;height:26px;font-size:.66rem}
+.me-btn.none{padding:5px 12px;color:var(--accent);border-color:var(--accent)}
+.foot{margin-top:32px;padding-top:14px;border-top:1px solid var(--line);font-size:.82rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center}
+.foot a{color:var(--accent);font-weight:600}
+.urls{display:grid;gap:8px}
+.url{display:flex;gap:8px;align-items:center;background:var(--surface-2);border:1px solid var(--line-2);border-radius:8px;padding:8px 10px}
+.url code{font-family:var(--mono);font-size:.9rem;flex:1;overflow-wrap:anywhere;user-select:all}
+.info{font-size:.9rem;color:var(--ink)}
+.info p{margin:0 0 10px}
+.retro-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:flex-end;margin-top:-4px}
+.retro-bar .grow,.share-foot .grow{flex:1}
+.mode-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px}
+.mode-bar .seg button{padding:8px 14px}
+.roll{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.who{display:flex;align-items:center;gap:8px;border:1.5px solid var(--line);background:var(--surface-2);border-radius:10px;padding:6px 12px 6px 6px;text-align:left;min-width:0}
+.who .n{font-weight:600;font-size:.88rem;line-height:1.2}
+.who .s{font-size:.72rem;color:var(--muted);line-height:1.2}
+.who .mini{width:18px;height:26px;border-radius:4px;border:1.5px dashed var(--line);flex:none}
+.who .mini.back{border:0;background:repeating-linear-gradient(135deg,var(--back-a) 0 4px,var(--back-b) 4px 8px)}
+.who.asking{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 3px var(--accent-soft)}
+.who.voted .s{color:var(--good)}
+.who.out{opacity:.55}
+.asking-line{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.asking-line .big-name{font-family:var(--display);font-size:1.5rem;font-weight:700;line-height:1.1}
+.share-foot{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;align-items:center}
+.all-in{display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding:14px;border-radius:10px;background:var(--good-soft);color:var(--good);font-weight:600}
+.conn{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:40;background:var(--warn-soft);color:var(--warn);border:1px solid var(--warn);padding:6px 14px;border-radius:99px;font-size:.85rem;font-weight:600}
+</style>
+</head>
+<body>
+<div id="conn" class="conn" hidden>Reconnecting to Sprint Room…</div>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">5</div>
+      <div>
+        <div class="eyebrow">Sprint Room</div>
+        <h1 id="teamName">Your team</h1>
+      </div>
+      <button class="btn ghost sm" data-act="rename-team" type="button">Rename</button>
+    </div>
+    <div class="top-actions">
+      <button id="meBtn" class="me-btn none" data-act="who" type="button">Who are you?</button>
+      <button class="btn sm" data-act="invite" type="button">Invite team</button>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Sections" style="flex-basis:100%">
+      <button class="tab" role="tab" data-tab="dashboard" type="button">Dashboard</button>
+      <button class="tab" role="tab" data-tab="team" type="button">Team</button>
+      <button class="tab" role="tab" data-tab="sprints" type="button">Sprints &amp; meetings</button>
+      <button class="tab" role="tab" data-tab="retro" type="button">Retrospective</button>
+      <button class="tab" role="tab" data-tab="poker" type="button">Scrum poker</button>
+    </nav>
+  </header>
+
+  <div id="banner" class="banner" hidden>
+    <span class="grow"><strong>Sample team loaded.</strong> The people, sprints and notes here are examples so you can see how Sprint Room works. Edit them, or remove them all to start with your own team.</span>
+    <button class="btn sm danger" data-act="clear-sample" type="button">Remove sample data</button>
+    <button class="btn sm ghost" data-act="keep-sample" type="button">Keep it</button>
+  </div>
+  <div id="notice" class="notice" hidden></div>
+
+  <main>
+    <section id="tab-dashboard" data-panel="dashboard"><div id="dash" class="dash"></div></section>
+
+    <section id="tab-team" data-panel="team" hidden>
+      <div class="section-head">
+        <div><h2>Team members</h2><p class="muted" style="margin:4px 0 0">Roles, availability and capacity for the current sprint.</p></div>
+        <button class="btn primary" data-act="add-member" type="button">Add member</button>
+      </div>
+      <div id="teamList" class="rows"></div>
+    </section>
+
+    <section id="tab-sprints" data-panel="sprints" hidden>
+      <div class="section-head">
+        <div><h2>Sprints &amp; meetings</h2><p class="muted" style="margin:4px 0 0">Sprint dates plus planning, daily stand-up, review and retrospective times.</p></div>
+        <button class="btn primary" data-act="add-sprint" type="button">New sprint</button>
+      </div>
+      <div id="sprintList" class="rows"></div>
+    </section>
+
+    <section id="tab-retro" data-panel="retro" hidden>
+      <div class="section-head">
+        <div><h2>Retrospective</h2><p class="muted" style="margin:4px 0 0">Vote on notes with +1. Give every action item an owner.</p></div>
+        <label class="field">Sprint
+          <select id="retroSprint"></select>
+        </label>
+      </div>
+      <div class="retro-bar">
+        <span id="retroDone" class="grow"></span>
+        <button class="btn" data-act="report-all" type="button">Excel report, all sprints</button>
+        <button class="btn primary" id="finishRetro" data-act="finish-retro" type="button">Finish retrospective &amp; download Excel</button>
+      </div>
+      <div class="retro-cols">
+        <div class="rcol" data-kind="well">
+          <h3><span>Went well</span><span class="votes-chip" id="cnt-well"></span></h3>
+          <form data-form="retro" data-kind="well"><div class="inline"><input type="text" id="in-well" placeholder="Something that helped us" maxlength="400"><button class="btn sm" type="submit">Add</button></div></form>
+          <ul id="list-well"></ul>
+        </div>
+        <div class="rcol" data-kind="improve">
+          <h3><span>To improve</span><span class="votes-chip" id="cnt-improve"></span></h3>
+          <form data-form="retro" data-kind="improve"><div class="inline"><input type="text" id="in-improve" placeholder="Something that slowed us down" maxlength="400"><button class="btn sm" type="submit">Add</button></div></form>
+          <ul id="list-improve"></ul>
+        </div>
+        <div class="rcol" data-kind="action">
+          <h3><span>Action items</span><span class="votes-chip" id="cnt-action"></span></h3>
+          <form data-form="retro" data-kind="action">
+            <input type="text" id="in-action" placeholder="What we'll do differently" maxlength="400">
+            <div class="inline"><select id="in-action-owner" aria-label="Owner"></select><button class="btn sm" type="submit">Add</button></div>
+          </form>
+          <ul id="list-action"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-poker" data-panel="poker" hidden>
+      <div class="mode-bar">
+        <div class="seg" id="modeSeg" role="group" aria-label="How the team votes">
+          <button type="button" data-act="mode" data-mode="share">Screen share: I enter each vote</button>
+          <button type="button" data-act="mode" data-mode="devices">Everyone votes on their own device</button>
+        </div>
+      </div>
+      <div class="poker-grid">
+        <div class="poker-main">
+          <div class="panel" id="storyPanel"></div>
+          <div class="panel" id="sharePanel"></div>
+          <div class="panel" id="devicePanel">
+            <div class="panel-head"><h3>Your card</h3><span class="muted" style="font-size:.82rem">Fibonacci deck · ½ for tiny tasks · ? unsure · ☕ need a break</span></div>
+            <div id="linkMe"></div>
+            <div id="deck" class="deck"></div>
+            <p id="deckHint" class="hint"></p>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><h3>Table</h3><span id="voteCount" class="muted num" style="font-size:.85rem"></span></div>
+            <div id="voters" class="voters"></div>
+            <div id="results"></div>
+          </div>
+        </div>
+        <aside class="poker-side">
+          <div class="panel">
+            <h3 style="margin-bottom:10px">Estimate a new story</h3>
+            <form id="newRound" class="side-form">
+              <input type="text" id="nr-key" placeholder="Key, e.g. PAY-214" maxlength="40">
+              <input type="text" id="nr-title" placeholder="Story title" maxlength="200" required>
+              <button class="btn primary" type="submit">Put it on the table</button>
+            </form>
+          </div>
+          <div class="panel" id="manualPanel">
+            <h3 style="margin-bottom:4px">Record a teammate's vote</h3>
+            <p class="hint" style="margin:0 0 10px">For people in the meeting who don't have Sprint Room open.</p>
+            <form id="manualVote" class="side-form">
+              <div class="inline">
+                <select id="mv-member" aria-label="Team member"></select>
+                <select id="mv-value" aria-label="Card"></select>
+                <button class="btn" type="submit">Add</button>
+              </div>
+            </form>
+          </div>
+          <div class="panel">
+            <div class="panel-head" style="margin-bottom:8px"><h3>Stories this sprint</h3><span id="storyTotal" class="muted num" style="font-size:.85rem"></span></div>
+            <div id="storyList"></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span id="dataInfo">Data is saved on the computer running Sprint Room.</span>
+    <a href="/api/export">Download backup</a>
+    <button class="link" data-act="restore" type="button">Restore from backup</button>
+    <input type="file" id="restoreFile" accept="application/json,.json" hidden>
+  </footer>
+</div>
+
+<div id="sheet" class="sheet" hidden>
+  <div class="sheet-card" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <h2 id="sheetTitle"></h2>
+    <form id="sheetForm">
+      <div id="sheetFields" class="fields"></div>
+      <div class="sheet-actions">
+        <button type="button" class="btn danger" id="sheetDelete">Delete</button>
+        <span class="grow"></span>
+        <button type="button" class="btn ghost" id="sheetCancel">Cancel</button>
+        <button type="submit" class="btn primary" id="sheetSave">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+<div id="toast" class="toast" hidden></div>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const DECK = ["0","0.5","1","2","3","5","8","13","21","?","coffee"];
+const NUM_DECK = [0,0.5,1,2,3,5,8,13,21];
+const cardLabel = v => v === "0.5" ? "½" : v === "coffee" ? "☕" : String(v);
+const STATUS = {available:["Available","good"], partial:["Part-time","warn"], away:["Out of office","bad"]};
+const KINDS = {well:"Went well", improve:"To improve", action:"Action items"};
+
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+  set(k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} },
+};
+const S = {members:[], sprints:[], retro:[], stories:[], poker:null, meta:null, myVote:null, online:[], joinUrls:[], dataFile:"",
+           me:store.get("sr-me") || "", client:store.get("sr-client"), tab:"dashboard", retroSprint:null, useCard:false, loaded:false,
+           mode:store.get("sr-mode") === "devices" ? "devices" : "share", asking:null, skipped:new Set(), skipRound:null};
+if (!S.client) { S.client = "c" + Math.random().toString(36).slice(2, 12); store.set("sr-client", S.client); }
+
+/* ---------- server api ---------- */
+async function api(method, path, body) {
+  let res;
+  try {
+    res = await fetch(path, {method, headers:body ? {"Content-Type":"application/json"} : {}, body:body ? JSON.stringify(body) : undefined});
+  } catch { throw new Error("Can't reach Sprint Room. Check that it's still running on the host computer."); }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || `Something went wrong (${res.status}).`);
+  return data;
+}
+async function act(fn, okMsg) {
+  try { await fn(); if (okMsg) toast(okMsg); return true; }
+  catch (e) { toast(e.message); console.error(e); return false; }
+}
+let loading = false, again = false;
+async function load() {
+  if (loading) { again = true; return; }
+  loading = true;
+  try {
+    const r = await fetch("/api/state?me=" + encodeURIComponent(S.me), {cache:"no-store"});
+    const d = await r.json();
+    S.meta = d.meta; S.members = d.members; S.sprints = d.sprints; S.retro = d.retroItems; S.stories = d.stories;
+    if (S.poker?.roundId !== d.poker.roundId) S.useCard = false;
+    S.poker = d.poker; S.myVote = d.myVote; S.online = d.online || []; S.joinUrls = d.joinUrls || []; S.dataFile = d.dataFile || "";
+    if (S.me && !S.members.some(m => m.id === S.me)) setMe("");
+    S.loaded = true;
+    render();
+  } catch (e) { console.error(e); }
+  loading = false;
+  if (again) { again = false; load(); }
+}
+let es = null;
+function connect() {
+  if (es) es.close();
+  es = new EventSource("/api/events?me=" + encodeURIComponent(S.me));
+  es.onmessage = () => { $("#conn").hidden = true; load(); };
+  es.onerror = () => { $("#conn").hidden = false; };
+}
+function setMe(id) {
+  if (S.me === id) return;
+  S.me = id; store.set("sr-me", id || null);
+  connect();
+}
+
+/* ---------- dates ---------- */
+const today = () => { const d = new Date(); d.setHours(0,0,0,0); return d; };
+const pd = s => { if (!s) return null; const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d); };
+const pdt = s => s ? new Date(s) : null;
+const fmtDay = d => d ? d.toLocaleDateString(undefined, {weekday:"short", day:"numeric", month:"short"}) : "—";
+const fmtTime = d => d ? d.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"}) : "";
+const fmtWhen = d => d ? `${fmtDay(d)}, ${fmtTime(d)}` : "Not scheduled";
+function workdays(a, b) { let n = 0; const d = new Date(a); while (d <= b) { const w = d.getDay(); if (w && w < 6) n++; d.setDate(d.getDate()+1); } return n; }
+function rel(at) {
+  const mins = Math.round((at - new Date()) / 60000);
+  if (mins < 60) return `in ${Math.max(mins,1)} min`;
+  const days = Math.round((new Date(at).setHours(0,0,0,0) - today()) / 864e5);
+  if (days === 0) return `in ${Math.floor(mins/60)}h ${mins%60}m`;
+  return days === 1 ? "tomorrow" : `in ${days} days`;
+}
+const sprintsSorted = () => [...S.sprints].sort((a,b) => (a.start||"").localeCompare(b.start||""));
+function currentSprint() {
+  const t = today(), list = sprintsSorted();
+  return list.find(s => pd(s.start) <= t && t <= pd(s.end)) || list.find(s => pd(s.start) > t) || list[list.length-1] || null;
+}
+function lastSprint() {
+  const cur = currentSprint(); if (!cur) return null;
+  const list = sprintsSorted().filter(s => s.end && s.end < cur.start);
+  return list[list.length-1] || null;
+}
+function sprintState(s) {
+  const t = today();
+  if (pd(s.end) < t) return ["Finished","plain"];
+  if (pd(s.start) > t) return ["Upcoming","info"];
+  return ["In progress","good"];
+}
+function ceremonies(sp) {
+  if (!sp) return [];
+  const ev = [];
+  if (sp.planning) ev.push({kind:"Sprint planning", at:pdt(sp.planning), sprint:sp});
+  if (sp.standup && sp.start && sp.end) {
+    const [h, m] = sp.standup.split(":").map(Number);
+    for (let d = pd(sp.start); d <= pd(sp.end); d.setDate(d.getDate()+1)) {
+      const w = d.getDay();
+      if (w && w < 6) { const x = new Date(d); x.setHours(h, m, 0, 0); ev.push({kind:"Daily stand-up", at:x, daily:true, sprint:sp}); }
+    }
+  }
+  if (sp.review) ev.push({kind:"Sprint review", at:pdt(sp.review), sprint:sp});
+  if (sp.retro) ev.push({kind:"Retrospective", at:pdt(sp.retro), sprint:sp});
+  return ev;
+}
+function nextMeeting() {
+  const now = new Date();
+  return S.sprints.flatMap(ceremonies).filter(e => e.at > now).sort((a,b) => a.at - b.at)[0] || null;
+}
+
+/* ---------- people ---------- */
+const hue = s => { let h = 0; for (const c of s || "") h = (h*31 + c.charCodeAt(0)) % 360; return h; };
+const initials = n => (n || "?").split(/\s+/).filter(Boolean).slice(0,2).map(w => w[0].toUpperCase()).join("");
+const avatar = (m, size = "") => `<span class="av ${size}" style="--h:${hue(m?.name)}" aria-hidden="true">${esc(initials(m?.name))}</span>`;
+const memberById = id => S.members.find(m => m.id === id);
+const statusPill = st => { const [l,c] = STATUS[st] || STATUS.available; return `<span class="pill ${c}">${l}</span>`; };
+const fmtPts = n => (Math.round(n * 10) / 10).toString();
+
+/* ---------- ui helpers ---------- */
+let toastT;
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 3200); }
+function setOptions(sel, html) { if (sel.dataset.sig === html) return; const v = sel.value; sel.innerHTML = html; sel.dataset.sig = html; if ([...sel.options].some(o => o.value === v)) sel.value = v; }
+function armed(btn) {
+  if (btn.classList.contains("armed")) return true;
+  btn.classList.add("armed"); const old = btn.textContent; btn.textContent = "Confirm";
+  setTimeout(() => { btn.classList.remove("armed"); btn.textContent = old; }, 3000);
+  return false;
+}
+async function copy(text, btn) {
+  try { await navigator.clipboard.writeText(text); btn.textContent = "Copied"; }
+  catch { const r = document.createRange(); r.selectNodeContents(btn.previousElementSibling); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = "Press Ctrl+C"; }
+  setTimeout(() => btn.textContent = "Copy", 1800);
+}
+
+/* ---------- sheet (edit dialog) ---------- */
+let sheetSave = null, sheetDel = null;
+function openSheet(title, fields, onSave, onDelete, saveLabel = "Save") {
+  $("#sheetTitle").textContent = title;
+  $("#sheetFields").innerHTML = fields.map(f => {
+    const id = "f_" + f.id, cls = f.full ? "field full" : "field";
+    if (f.type === "html") return `<div class="full info">${f.html}</div>`;
+    if (f.type === "select") return `<label class="${cls}">${esc(f.label)}<select id="${id}">${f.options.map(([v,l]) => `<option value="${esc(v)}"${v === (f.value ?? "") ? " selected" : ""}>${esc(l)}</option>`).join("")}</select></label>`;
+    if (f.type === "textarea") return `<label class="${cls}">${esc(f.label)}<textarea id="${id}" maxlength="600">${esc(f.value)}</textarea></label>`;
+    return `<label class="${cls}">${esc(f.label)}<input id="${id}" type="${f.type || "text"}" value="${esc(f.value)}"${f.required ? " required" : ""}${f.min != null ? ` min="${f.min}"` : ""} maxlength="200"></label>`;
+  }).join("");
+  sheetSave = onSave; sheetDel = onDelete;
+  $("#sheetSave").hidden = !onSave; $("#sheetSave").textContent = saveLabel;
+  $("#sheetCancel").textContent = onSave ? "Cancel" : "Close";
+  const del = $("#sheetDelete"); del.hidden = !onDelete; del.classList.remove("armed"); del.textContent = "Delete";
+  $("#sheet").hidden = false;
+  setTimeout(() => ($("#sheetFields input, #sheetFields select") || $("#sheetCancel")).focus(), 30);
+}
+const closeSheet = () => { $("#sheet").hidden = true; sheetSave = sheetDel = null; };
+const fv = id => { const el = $("#f_" + id); return el ? el.value.trim() : ""; };
+$("#sheetForm").addEventListener("submit", async e => { e.preventDefault(); if (sheetSave && await sheetSave()) closeSheet(); });
+$("#sheetCancel").addEventListener("click", closeSheet);
+$("#sheet").addEventListener("click", e => { if (e.target.id === "sheet") closeSheet(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#sheet").hidden) closeSheet(); });
+$("#sheetDelete").addEventListener("click", async e => { if (!armed(e.currentTarget)) return; if (sheetDel && await sheetDel()) closeSheet(); });
+
+/* ---------- tabs ---------- */
+const TABS = ["dashboard","team","sprints","retro","poker"];
+function showTab(t) {
+  S.tab = t;
+  $$(".tab").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === t)));
+  $$("[data-panel]").forEach(p => p.hidden = p.dataset.panel !== t);
+  store.set("sr-tab", t);
+  if (location.hash.slice(1) !== t) history.replaceState(null, "", "#" + t);
+  render();
+}
+$$(".tab").forEach(b => b.addEventListener("click", () => showTab(b.dataset.tab)));
+
+/* ---------- render ---------- */
+let rq = false;
+function render() { if (rq) return; rq = true; requestAnimationFrame(() => { rq = false; renderNow(); }); }
+function renderNow() {
+  if (!S.loaded) return;
+  $("#teamName").textContent = S.meta?.teamName || "Your team";
+  document.title = (S.meta?.teamName ? S.meta.teamName + " · " : "") + "Sprint Room";
+  $("#banner").hidden = !S.meta?.sample;
+  const me = memberById(S.me), mb = $("#meBtn");
+  mb.className = "me-btn" + (me ? "" : " none");
+  mb.innerHTML = me ? `${avatar(me)}<span>${esc(me.name)}</span>` : "Who are you?";
+  $("#dataInfo").textContent = S.dataFile ? `Data is saved on the host computer in ${S.dataFile}` : "Data is saved on the computer running Sprint Room.";
+  ({dashboard:renderDashboard, team:renderTeam, sprints:renderSprints, retro:renderRetro, poker:renderPoker})[S.tab]();
+}
+
+function renderDashboard() {
+  const el = $("#dash"), cur = currentSprint(), last = lastSprint();
+  if (!cur && !S.members.length) {
+    el.innerHTML = `<div class="span-12 empty"><h3 style="margin-bottom:6px">Set up your team</h3><p style="margin:0 0 12px">Add the people on your team and your first sprint. The dashboard fills in from there.</p><button class="btn primary" data-act="add-member" type="button">Add member</button> <button class="btn" data-act="add-sprint" type="button">New sprint</button></div>`;
+    return;
+  }
+  let html = "";
+  if (cur) {
+    const s = pd(cur.start), e = pd(cur.end), t = today();
+    const total = workdays(s, e), done = t < s ? 0 : workdays(s, t > e ? e : t);
+    const [stLabel, stCls] = sprintState(cur);
+    html += `<div class="panel hero span-8">
+      <div class="eyebrow">Current sprint</div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px"><h2>${esc(cur.name)}</h2><span class="pill ${stCls}">${stLabel}</span></div>
+      <p class="goal">${cur.goal ? esc(cur.goal) : '<span class="muted">No sprint goal yet.</span>'}</p>
+      <div class="hero-meta num"><span>${fmtDay(s)} → ${fmtDay(e)}</span><span>Working day ${Math.min(done,total)} of ${total}</span>${cur.standup ? `<span>Stand-up daily at ${esc(cur.standup)}</span>` : ""}</div>
+      <div class="bar" role="img" aria-label="${done} of ${total} working days elapsed"><span style="width:${total ? Math.round(Math.min(done,total)/total*100) : 0}%"></span></div>
+    </div>`;
+  } else {
+    html += `<div class="panel span-8 empty">No sprints yet. <button class="link" data-act="add-sprint" type="button">Create the first sprint</button></div>`;
+  }
+  const nm = nextMeeting();
+  html += nm ? `<div class="panel next span-4"><div class="eyebrow">Next meeting</div><div class="when">${esc(rel(nm.at))}</div><div class="what">${esc(nm.kind)}</div><div class="num" style="opacity:.85">${esc(fmtWhen(nm.at))}${nm.sprint ? " · " + esc(nm.sprint.name) : ""}</div></div>`
+             : `<div class="panel span-4"><div class="eyebrow">Next meeting</div><p class="muted">Nothing scheduled. Add meeting times in <button class="link" data-goto="sprints" type="button">Sprints &amp; meetings</button>.</p></div>`;
+  if (cur) {
+    const now = new Date();
+    const stand = ceremonies(cur).filter(x => x.daily);
+    const nextStand = stand.find(x => x.at > now);
+    const rows = [
+      ["Sprint planning", pdt(cur.planning)],
+      ["Daily stand-up", nextStand ? nextStand.at : null, stand.length ? `${stand.filter(x => x.at <= now).length} of ${stand.length} held` : null],
+      ["Sprint review", pdt(cur.review)],
+      ["Retrospective", pdt(cur.retro)],
+    ];
+    html += `<div class="panel span-4"><div class="panel-head" style="margin-bottom:4px"><h3>Meetings this sprint</h3><button class="btn ghost sm" data-act="edit-sprint" data-id="${esc(cur.id)}" type="button">Edit</button></div><ul class="ceremonies">${rows.map(([k, at, extra]) => {
+      const pill = !at ? (k === "Daily stand-up" && stand.length ? '<span class="pill plain">Done</span>' : '<span class="pill plain">Not set</span>') : at < now ? '<span class="pill plain">Done</span>' : '<span class="pill info">Upcoming</span>';
+      const d = k === "Daily stand-up" ? (at ? `Next: ${fmtWhen(at)}` : "No more this sprint") + (extra ? ` · ${extra}` : "") : fmtWhen(at);
+      return `<li><div><div class="t">${k}</div><div class="d num">${esc(d)}</div></div>${pill}</li>`;
+    }).join("")}</ul></div>`;
+  }
+  const avail = S.members.filter(m => m.status !== "away").length;
+  html += `<div class="panel span-8"><div class="panel-head"><h3>Team <span class="muted num" style="font-weight:500">· ${avail} of ${S.members.length} available</span></h3><button class="btn ghost sm" data-goto="team" type="button">Manage</button></div>
+    ${S.members.length ? `<div class="members">${S.members.map(m => `<div class="member">${avatar(m)}<div><div class="n">${esc(m.name)}</div><div class="r">${esc(m.role || "Team member")}</div></div>${statusPill(m.status)}</div>`).join("")}</div>` : `<p class="muted">No members yet.</p>`}</div>`;
+  if (cur) {
+    const st = S.stories.filter(s => s.sprintId === cur.id);
+    const pts = st.reduce((a,s) => a + (typeof s.points === "number" ? s.points : 0), 0);
+    const cap = S.members.filter(m => m.status !== "away").reduce((a,m) => a + (Number(m.capacity) || 0), 0);
+    const queued = st.filter(s => typeof s.points !== "number").length;
+    const pct = cap ? Math.round(pts / cap * 100) : 0;
+    html += `<div class="panel span-4"><div class="eyebrow" style="margin-bottom:10px">Sprint load</div>
+      <div class="load-row"><span class="big num">${fmtPts(pts)}</span><span class="muted num">of ${fmtPts(cap)} pts capacity</span></div>
+      <div class="bar ${pct > 100 ? "over" : ""}"><span style="width:${Math.min(pct,100)}%"></span></div>
+      <p class="hint">${pct > 100 ? `Over capacity by ${fmtPts(pts - cap)} pts. ` : ""}${st.length - queued} estimated ${st.length - queued === 1 ? "story" : "stories"}${queued ? ` · ${queued} waiting for scrum poker` : ""}.</p>
+      ${queued ? `<button class="btn sm" data-goto="poker" type="button" style="margin-top:8px">Estimate in scrum poker</button>` : ""}</div>`;
+  }
+  const rs = last || cur;
+  if (rs) {
+    const items = S.retro.filter(r => r.sprintId === rs.id);
+    const top = k => items.filter(r => r.kind === k).sort((a,b) => (b.votes?.length||0) - (a.votes?.length||0)).slice(0, 3);
+    const actions = items.filter(r => r.kind === "action");
+    const open = actions.filter(a => !a.done).length;
+    const li = r => `<li><span>${esc(r.text)}</span><span class="votes-chip">+${r.votes?.length || 0}</span></li>`;
+    html += `<div class="panel span-12"><div class="panel-head"><div><div class="eyebrow">${last ? "From the last sprint" : "This sprint"}</div><h3>${esc(rs.name)} retrospective</h3></div><button class="btn sm" data-act="open-retro" data-id="${esc(rs.id)}" type="button">Open retrospective</button></div>
+      ${items.length ? `<div class="retro-sum">
+        <div><h4 class="k-well">Went well</h4><ul>${top("well").map(li).join("") || '<li class="muted">Nothing noted</li>'}</ul></div>
+        <div><h4 class="k-improve">To improve</h4><ul>${top("improve").map(li).join("") || '<li class="muted">Nothing noted</li>'}</ul></div>
+        <div><h4 class="k-action">Action items <span class="muted num" style="text-transform:none;letter-spacing:0">· ${open} open</span></h4><ul>${actions.map(a => { const o = memberById(a.ownerId); return `<li><span style="${a.done ? "text-decoration:line-through;color:var(--muted)" : ""}">${esc(a.text)}</span><span style="display:flex;gap:6px;align-items:center">${o ? avatar(o, "xs") : ""}${a.done ? '<span class="pill good">Done</span>' : '<span class="pill warn">Open</span>'}</span></li>`; }).join("") || '<li class="muted">No action items</li>'}</ul></div>
+      </div>` : `<p class="muted">No retrospective notes for ${esc(rs.name)} yet.</p>`}</div>`;
+  }
+  el.innerHTML = html;
+}
+
+function renderTeam() {
+  const el = $("#teamList");
+  if (!S.members.length) { el.innerHTML = `<div class="empty">No team members yet. Add the people who join your stand-ups.</div>`; return; }
+  el.innerHTML = S.members.map(m => `<div class="row">${avatar(m, "lg")}
+    <div><div class="title">${esc(m.name)}${m.id === S.me ? ' <span class="muted" style="font-weight:500">(you)</span>' : ""}</div>
+      <div class="sub"><span>${esc(m.role || "Team member")}</span><span class="num">${Number(m.capacity) || 0} pts capacity</span>${S.online.includes(m.id) ? '<span style="color:var(--good)">Online now</span>' : ""}${m.notes ? `<span>${esc(m.notes)}</span>` : ""}</div></div>
+    <div class="right">${statusPill(m.status)}<button class="btn sm" data-act="edit-member" data-id="${esc(m.id)}" type="button">Edit</button></div></div>`).join("");
+}
+
+function renderSprints() {
+  const el = $("#sprintList"), cur = currentSprint();
+  const list = sprintsSorted().reverse();
+  if (!list.length) { el.innerHTML = `<div class="empty">No sprints yet. Create one to schedule planning, stand-ups, review and retro.</div>`; return; }
+  el.innerHTML = list.map(s => {
+    const [l, c] = sprintState(s);
+    const num = (s.name.match(/\d+/) || [""])[0] || initials(s.name);
+    return `<div class="row"><div class="sprint-badge ${cur && cur.id === s.id ? "current" : ""}">${esc(num)}</div>
+      <div><div class="title">${esc(s.name)} <span class="pill ${c}" style="vertical-align:2px">${l}</span></div>
+        <div class="sub num"><span>${fmtDay(pd(s.start))} → ${fmtDay(pd(s.end))}</span>${s.goal ? `<span>${esc(s.goal)}</span>` : ""}</div>
+        <div class="sub num" style="margin-top:4px"><span>Planning: ${esc(fmtWhen(pdt(s.planning)))}</span><span>Stand-up: ${s.standup ? esc(s.standup) + " weekdays" : "Not set"}</span><span>Review: ${esc(fmtWhen(pdt(s.review)))}</span><span>Retro: ${esc(fmtWhen(pdt(s.retro)))}</span></div></div>
+      <div class="right"><button class="btn sm" data-act="edit-sprint" data-id="${esc(s.id)}" type="button">Edit</button></div></div>`;
+  }).join("");
+}
+
+function defaultRetroSprint() {
+  const cur = currentSprint(), last = lastSprint();
+  if (cur && S.retro.some(r => r.sprintId === cur.id)) return cur.id;
+  return (last || cur)?.id || null;
+}
+const voterKey = () => S.me || S.client;
+function renderRetro() {
+  const list = sprintsSorted().reverse();
+  if (!S.retroSprint || !S.sprints.some(s => s.id === S.retroSprint)) S.retroSprint = defaultRetroSprint();
+  const sel = $("#retroSprint");
+  setOptions(sel, list.length ? list.map(s => `<option value="${esc(s.id)}">${esc(s.name)} · ${fmtDay(pd(s.start))} → ${fmtDay(pd(s.end))}</option>`).join("") : `<option value="">No sprints yet</option>`);
+  if (S.retroSprint) sel.value = S.retroSprint;
+  setOptions($("#in-action-owner"), `<option value="">No owner yet</option>` + S.members.map(m => `<option value="${esc(m.id)}">${esc(m.name)}</option>`).join(""));
+  const sp = S.sprints.find(s => s.id === S.retroSprint);
+  $("#retroDone").innerHTML = sp?.retroFinishedAt ? `<span class="pill good">Finished ${esc(fmtWhen(new Date(sp.retroFinishedAt)))}</span>` : "";
+  $("#finishRetro").textContent = sp?.retroFinishedAt ? "Download Excel report" : "Finish retrospective & download Excel";
+  $("#finishRetro").disabled = !sp;
+  const items = S.retro.filter(r => r.sprintId === S.retroSprint);
+  const me = voterKey();
+  for (const k of Object.keys(KINDS)) {
+    const rows = items.filter(r => r.kind === k).sort((a,b) => (b.votes?.length||0) - (a.votes?.length||0) || (a.createdAt||"").localeCompare(b.createdAt||""));
+    $("#cnt-" + k).textContent = rows.length ? `${rows.length} ${rows.length === 1 ? "note" : "notes"}` : "";
+    $("#list-" + k).innerHTML = rows.map(r => {
+      const on = (r.votes || []).includes(me);
+      const owner = k === "action" ? `<select data-act="owner" data-id="${esc(r.id)}" aria-label="Owner"><option value="">No owner</option>${S.members.map(m => `<option value="${esc(m.id)}"${m.id === r.ownerId ? " selected" : ""}>${esc(m.name)}</option>`).join("")}</select>` : "";
+      const done = k === "action" ? `<label class="check"><input type="checkbox" data-act="done" data-id="${esc(r.id)}"${r.done ? " checked" : ""}> Done</label>` : "";
+      return `<li class="note ${r.done ? "done" : ""}"><div class="txt">${esc(r.text)}</div><div class="meta"><button class="vote ${on ? "on" : ""}" data-act="vote-note" data-id="${esc(r.id)}" type="button" aria-pressed="${on}">+${r.votes?.length || 0}</button>${owner}${done}<span class="grow"></span><button class="x" data-act="del-note" data-id="${esc(r.id)}" type="button" aria-label="Delete note">Delete</button></div></li>`;
+    }).join("") || `<li class="muted" style="font-size:.88rem;padding:6px 2px">Nothing yet.</li>`;
+  }
+}
+
+function roundVotes() {
+  const p = S.poker; if (!p?.roundId) return [];
+  return p.voters.map(mid => ({member:memberById(mid), value:p.revealed ? p.votes[mid] : null, recorded:!!p.recorded?.[mid]})).filter(v => v.member);
+}
+function stats(votes) {
+  const nums = votes.map(v => parseFloat(v.value)).filter(n => !isNaN(n));
+  if (!nums.length) return null;
+  const avg = nums.reduce((a,b) => a+b, 0) / nums.length;
+  const card = NUM_DECK.reduce((best, c) => Math.abs(c - avg) < Math.abs(best - avg) || (Math.abs(c - avg) === Math.abs(best - avg) && c > best) ? c : best, NUM_DECK[0]);
+  const min = Math.min(...nums), max = Math.max(...nums);
+  const spread = NUM_DECK.indexOf(max) - NUM_DECK.indexOf(min);
+  return {avg:Math.round(avg*10)/10, card, min, max, spread, n:nums.length, other:votes.length - nums.length};
+}
+function nextQueued() {
+  const cur = currentSprint();
+  return S.stories.filter(x => cur && x.sprintId === cur.id && typeof x.points !== "number" && x.id !== S.poker?.storyId).sort((a,b) => (a.createdAt||"").localeCompare(b.createdAt||""))[0];
+}
+// Screen-share mode: the facilitator asks each person in turn and clicks their card.
+const shareOrder = () => [...S.members.filter(m => m.status !== "away"), ...S.members.filter(m => m.status === "away")];
+function nextToAsk(p, justVoted) {
+  const done = new Set([...(p?.voters || []), ...S.skipped]);
+  if (justVoted) done.add(justVoted);
+  return shareOrder().find(m => !done.has(m.id))?.id || null;
+}
+function renderShare(p, revealed) {
+  const el = $("#sharePanel");
+  const head = `<div class="panel-head"><h3>Collect votes</h3><span class="muted" style="font-size:.82rem">Ask each person for their card and click it. Cards stay face down until you reveal them.</span></div>`;
+  if (!p) { el.innerHTML = head + `<p class="muted" style="margin:0">Put a story on the table first, using the form on the right or a story from this sprint's list.</p>`; return; }
+  if (S.skipRound !== p.roundId) { S.skipRound = p.roundId; S.skipped = new Set(S.members.filter(m => m.status === "away").map(m => m.id)); S.asking = null; }
+  if (!revealed && (!S.asking || !memberById(S.asking))) S.asking = nextToAsk(p);
+  const roll = shareOrder().map(m => {
+    const voted = p.voters.includes(m.id), skipped = S.skipped.has(m.id) && !voted, asking = !revealed && S.asking === m.id;
+    const label = asking ? "asking now" : voted ? "voted" : skipped ? (m.status === "away" ? "out of office" : "skipped") : "waiting";
+    return `<button class="who ${asking ? "asking" : ""} ${voted ? "voted" : ""} ${skipped ? "out" : ""}" data-act="ask" data-id="${esc(m.id)}" type="button"${revealed ? " disabled" : ""}><span class="mini ${voted ? "back" : ""}"></span><span><span class="n">${esc(m.name)}</span><br><span class="s">${label}</span></span></button>`;
+  }).join("");
+  const cur = memberById(S.asking);
+  let body;
+  if (revealed) body = `<p class="muted" style="margin:0">Cards are revealed below. Use <strong>Vote again</strong> to collect a new round.</p>`;
+  else if (!S.members.length) body = `<p class="muted" style="margin:0">Add your team members first.</p>`;
+  else if (!cur) body = `<div class="all-in"><span>Everyone has been asked (${p.voters.length} ${p.voters.length === 1 ? "vote" : "votes"}).</span><button class="btn primary" data-act="reveal" type="button"${p.voters.length ? "" : " disabled"}>Reveal cards</button></div>`;
+  else {
+    const already = p.voters.includes(cur.id);
+    body = `<div class="asking-line">${avatar(cur, "lg")}<div><div class="eyebrow">Now asking</div><div class="big-name">${esc(cur.name)}</div><div class="muted" style="font-size:.85rem">${esc(cur.role || "Team member")}${already ? " · already voted, pick a card to change it" : ""}</div></div></div>
+      <div class="deck">${DECK.map(v => `<button class="pcard" data-act="record" data-v="${v}" type="button" aria-label="${esc(cur.name)} votes ${v === "coffee" ? "coffee break" : v}"><small>${cardLabel(v)}</small>${cardLabel(v)}</button>`).join("")}</div>
+      <div class="share-foot"><button class="btn" data-act="skip" type="button">Skip ${esc(cur.name.split(" ")[0])}</button>${already ? `<button class="btn ghost" data-act="unvote" type="button">Clear ${esc(cur.name.split(" ")[0])}'s vote</button>` : ""}<span class="grow"></span>${p.voters.length ? `<button class="btn ghost" data-act="reveal" type="button">Reveal now (${p.voters.length} voted)</button>` : ""}</div>`;
+  }
+  el.innerHTML = head + `<div class="roll">${roll}</div>` + body;
+}
+function downloadFile(url) { const a = document.createElement("a"); a.href = url; a.download = ""; document.body.appendChild(a); a.click(); a.remove(); }
+
+function renderPoker() {
+  const p = S.poker?.roundId ? S.poker : null;
+  const cur = currentSprint();
+  const votes = roundVotes();
+  const revealed = !!p?.revealed;
+  const share = S.mode === "share";
+  $("#sharePanel").hidden = !share; $("#devicePanel").hidden = share; $("#manualPanel").hidden = share;
+  $$("#modeSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.mode === S.mode)));
+  if (share) renderShare(p, revealed);
+  $("#storyPanel").innerHTML = p ? `<div class="story-now"><div style="min-width:0">
+      <div class="eyebrow">On the table${cur ? " · " + esc(cur.name) : ""}</div>
+      ${p.storyKey ? `<div class="key" style="margin-top:6px">${esc(p.storyKey)}</div>` : ""}<h2>${esc(p.storyTitle)}</h2>
+      <p class="muted" style="margin:6px 0 0">${revealed ? (p.saved ? `Saved as <strong>${esc(fmtPts(p.savedPoints))} pts</strong>.` : "Cards are face up. Discuss the high and low votes, then save the estimate or vote again.") : `Pick a card. Votes stay hidden until someone reveals them.`}</p></div>
+      <div class="story-actions">${!revealed ? `<button class="btn primary" data-act="reveal" type="button"${votes.length ? "" : " disabled"}>Reveal cards</button>` : `<button class="btn" data-act="revote" type="button">Vote again</button>`}${revealed && p.saved && nextQueued() ? `<button class="btn primary" data-act="next-story" type="button">Next story</button>` : ""}<button class="btn ghost" data-act="clear-table" type="button">Clear table</button></div></div>`
+    : `<div class="eyebrow">Scrum poker</div><h2 style="margin:6px 0">No story on the table</h2><p class="muted" style="margin:0">Add a story on the right, or pick one from this sprint's list. Everyone votes from their own screen, and the average becomes the story's points.</p>`;
+  $("#linkMe").innerHTML = !S.me && S.members.length ? `<div class="linkme"><span>Which team member are you?</span><select id="linkSel" aria-label="Pick yourself">${S.members.map(m => `<option value="${esc(m.id)}">${esc(m.name)}</option>`).join("")}</select><button class="btn sm" data-act="link-me" type="button">That's me</button></div>` : "";
+  const myVal = p ? S.myVote : null;
+  $("#deck").innerHTML = DECK.map(v => `<button class="pcard ${myVal === v ? "sel" : ""}" data-act="cast" data-v="${v}" type="button"${!p || revealed || !S.me ? " disabled" : ""} aria-pressed="${myVal === v}" aria-label="Vote ${v === "coffee" ? "coffee break" : v}"><small>${cardLabel(v)}</small>${cardLabel(v)}</button>`).join("");
+  $("#deckHint").textContent = !S.me ? "Tell Sprint Room who you are to vote from this screen."
+    : !p ? "Cards unlock when a story is on the table."
+    : revealed ? "Cards are revealed. Start a new vote to change yours."
+    : myVal ? `You voted ${cardLabel(myVal)}. You can change it until the cards are revealed.` : "";
+  const waiting = p && !revealed ? S.online.filter(id => !p.voters.includes(id)).map(memberById).filter(Boolean) : [];
+  $("#voteCount").textContent = p ? `${votes.length} voted${waiting.length ? ` · ${waiting.length} still choosing` : ""}` : "";
+  const st = revealed ? stats(votes) : null;
+  const tile = v => {
+    const val = v.value;
+    const hi = st && st.spread >= 3 && (parseFloat(val) === st.min || parseFloat(val) === st.max);
+    const face = revealed && val != null ? `<div class="vcard face ${hi ? "hi" : ""}">${cardLabel(val)}</div>` : `<div class="vcard back" aria-label="Voted"></div>`;
+    return `<div class="voter">${face}<div class="nm">${esc(v.member.name)}${v.member.id === S.me ? " (you)" : ""}</div>${v.recorded ? `<div class="tag">recorded${revealed ? "" : ` <button class="x" data-act="del-manual" data-id="${esc(v.member.id)}" type="button" aria-label="Remove vote">×</button>`}</div>` : ""}</div>`;
+  };
+  $("#voters").innerHTML = p ? (votes.map(tile).join("") + waiting.map(m => `<div class="voter"><div class="vcard wait">…</div><div class="nm">${esc(m.name)}</div><div class="tag">choosing</div></div>`).join("")) || `<p class="muted" style="margin:0">No votes yet.</p>`
+    : `<p class="muted" style="margin:0">The table is empty.</p>`;
+  if (revealed && st) {
+    const counts = DECK.map(d => [d, votes.filter(v => v.value === d).length]).filter(([,c]) => c);
+    const maxC = Math.max(...counts.map(([,c]) => c));
+    const final = S.useCard ? st.card : st.avg;
+    const verdict = st.spread === 0 ? `<span class="pill good">Consensus</span>` : st.spread >= 3 ? `<span class="pill warn">Wide spread · ${cardLabel(String(st.min))} to ${cardLabel(String(st.max))}</span>` : `<span class="pill info">Close</span>`;
+    $("#results").innerHTML = `<div class="result"><div class="final"><div class="eyebrow">Average of ${st.n} ${st.n === 1 ? "vote" : "votes"}</div><div class="big num">${fmtPts(st.avg)}</div><div>${verdict}</div>${st.other ? `<div class="hint" style="margin:0">${st.other} ? or ☕ not counted</div>` : ""}</div>
+      <div class="dist">${counts.map(([d,c]) => `<div class="d"><b>${cardLabel(d)}</b><div class="track"><span style="width:${Math.round(c/maxC*100)}%"></span></div><span class="num muted">${c}</span></div>`).join("")}</div></div>
+      <div class="save-row"><div class="seg" role="group" aria-label="Final estimate"><button type="button" data-act="use-avg" aria-pressed="${!S.useCard}">Average (${fmtPts(st.avg)})</button><button type="button" data-act="use-card" aria-pressed="${S.useCard}">Nearest card (${cardLabel(String(st.card))})</button></div>
+      <button class="btn primary" data-act="save-est" type="button">${p.saved ? "Update" : "Save"} ${fmtPts(final)} pts${p.storyKey ? " to " + esc(p.storyKey) : ""}</button></div>`;
+  } else if (revealed) {
+    $("#results").innerHTML = `<p class="hint">No numeric votes to average. Discuss, then vote again.</p>`;
+  } else $("#results").innerHTML = "";
+  setOptions($("#mv-member"), S.members.length ? S.members.map(m => `<option value="${esc(m.id)}">${esc(m.name)}</option>`).join("") : `<option value="">Add team members first</option>`);
+  setOptions($("#mv-value"), DECK.map(v => `<option value="${v}">${cardLabel(v)}</option>`).join(""));
+  $("#manualVote button").disabled = !p || revealed || !S.members.length;
+  const sprintStories = S.stories.filter(x => cur && x.sprintId === cur.id).sort((a,b) => (typeof a.points === "number") - (typeof b.points === "number") || (a.createdAt||"").localeCompare(b.createdAt||""));
+  const tot = sprintStories.reduce((a,x) => a + (typeof x.points === "number" ? x.points : 0), 0);
+  $("#storyTotal").textContent = sprintStories.length ? `${fmtPts(tot)} pts total` : "";
+  $("#storyList").innerHTML = !cur ? `<p class="muted" style="margin:0">Create a sprint to collect its stories here.</p>`
+    : sprintStories.length ? `<ul class="stories">${sprintStories.map(x => `<li><div style="min-width:0">${x.key ? `<div class="k">${esc(x.key)}</div>` : ""}<div class="tt">${esc(x.title)}</div></div><div style="display:flex;gap:6px;align-items:center">${typeof x.points === "number" ? `<span class="pts num" title="Average of ${x.voteCount || 0} votes">${fmtPts(x.points)}</span>` : ""}<button class="btn sm ${typeof x.points === "number" ? "ghost" : ""}" data-act="estimate" data-id="${esc(x.id)}" type="button">${typeof x.points === "number" ? "Re-estimate" : "Estimate"}</button><button class="x" data-act="del-story" data-id="${esc(x.id)}" type="button" aria-label="Delete story">×</button></div></li>`).join("")}</ul>`
+    : `<p class="muted" style="margin:0">No stories in ${esc(cur.name)} yet.</p>`;
+}
+
+/* ---------- sheets ---------- */
+function memberSheet(m) {
+  openSheet(m ? "Edit team member" : "Add team member", [
+    {id:"name", label:"Name", value:m?.name || "", required:true, full:true},
+    {id:"role", label:"Role", value:m?.role || ""},
+    {id:"capacity", label:"Capacity this sprint (pts)", type:"number", min:0, value:m?.capacity ?? 8},
+    {id:"status", label:"Availability", type:"select", value:m?.status || "available", options:Object.entries(STATUS).map(([k,[l]]) => [k,l])},
+    {id:"notes", label:"Notes (time zone, focus area, days off)", type:"textarea", value:m?.notes || "", full:true},
+  ], () => {
+    const body = {name:fv("name"), role:fv("role"), capacity:Math.max(0, Number(fv("capacity")) || 0), status:fv("status"), notes:fv("notes")};
+    if (!body.name) { toast("Add a name first."); return false; }
+    return m ? act(() => api("PATCH", "/api/c/members/" + m.id, body), "Saved") : act(() => api("POST", "/api/c/members", body), `Added ${body.name}`);
+  }, m ? () => act(() => api("DELETE", "/api/c/members/" + m.id), `Removed ${m.name}`) : null);
+}
+function sprintSheet(sp) {
+  let d = sp;
+  if (!sp) {
+    const last = sprintsSorted().pop();
+    const start = last ? pd(last.end) : today();
+    if (last) start.setDate(start.getDate() + 1);
+    while (start.getDay() !== 1) start.setDate(start.getDate() + 1);
+    const end = new Date(start); end.setDate(end.getDate() + 11);
+    const iso = x => `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;
+    const n = last ? (parseInt((last.name.match(/\d+/) || [0])[0]) || 0) + 1 : 1;
+    const tm = (v, dflt) => (v || "").split("T")[1] || dflt;
+    d = {name:`Sprint ${n}`, goal:"", start:iso(start), end:iso(end), standup:last?.standup || "09:30",
+         planning:`${iso(start)}T${tm(last?.planning, "10:00")}`, review:`${iso(end)}T${tm(last?.review, "14:00")}`, retro:`${iso(end)}T${tm(last?.retro, "15:30")}`};
+  }
+  openSheet(sp ? `Edit ${sp.name}` : "New sprint", [
+    {id:"name", label:"Name", value:d.name, required:true},
+    {id:"standup", label:"Daily stand-up time", type:"time", value:d.standup || ""},
+    {id:"goal", label:"Sprint goal", type:"textarea", value:d.goal || "", full:true},
+    {id:"start", label:"Starts", type:"date", value:d.start, required:true},
+    {id:"end", label:"Ends", type:"date", value:d.end, required:true},
+    {id:"planning", label:"Sprint planning", type:"datetime-local", value:d.planning || ""},
+    {id:"review", label:"Sprint review", type:"datetime-local", value:d.review || ""},
+    {id:"retro", label:"Retrospective", type:"datetime-local", value:d.retro || "", full:true},
+  ], () => {
+    const body = {name:fv("name"), goal:fv("goal"), start:fv("start"), end:fv("end"), standup:fv("standup"), planning:fv("planning"), review:fv("review"), retro:fv("retro")};
+    if (!body.name || !body.start || !body.end) { toast("A sprint needs a name, start date and end date."); return false; }
+    if (body.end < body.start) { toast("The end date is before the start date."); return false; }
+    return sp ? act(() => api("PATCH", "/api/c/sprints/" + sp.id, body), "Sprint saved") : act(() => api("POST", "/api/c/sprints", body), `${body.name} created`);
+  }, sp ? () => act(() => api("DELETE", "/api/c/sprints/" + sp.id), `${sp.name} deleted`) : null);
+}
+function whoSheet() {
+  openSheet("Who are you?", [
+    {type:"html", html:"<p>Pick yourself so your scrum poker votes and retro +1s show under your name. This is remembered on this computer only.</p>"},
+    {id:"me", label:"Team member", type:"select", value:S.me, full:true, options:[["", "Just watching"], ...S.members.map(m => [m.id, m.name])]},
+  ], () => { setMe(fv("me")); load(); return true; });
+}
+function inviteSheet() {
+  const urls = S.joinUrls.length ? S.joinUrls : [location.origin];
+  openSheet("Invite your team", [{type:"html", html:
+    `<p>Teammates on the same office network or VPN open this address in their browser. They don't need to install anything.</p>
+     <div class="urls">${urls.map(u => `<div class="url"><code>${esc(u)}</code><button class="btn sm" type="button" data-copy="${esc(u)}">Copy</button></div>`).join("")}</div>
+     <p class="hint">If there are several addresses, try the one that starts with 192.168 or 10. first. If a teammate can't connect, the host computer's firewall may be blocking Sprint Room; see the README.</p>`}], null, null);
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click", async e => {
+  const c = e.target.closest("[data-copy]"); if (c) { copy(c.dataset.copy, c); return; }
+  const g = e.target.closest("[data-goto]"); if (g) { showTab(g.dataset.goto); return; }
+  const b = e.target.closest("[data-act]"); if (!b || b.tagName === "SELECT" || b.type === "checkbox") return;
+  const id = b.dataset.id, a = b.dataset.act, p = S.poker;
+  if (a === "who") return whoSheet();
+  if (a === "mode") { S.mode = b.dataset.mode; store.set("sr-mode", S.mode); return render(); }
+  if (a === "ask") { S.asking = id; return render(); }
+  if (a === "skip") { if (S.asking) S.skipped.add(S.asking); S.asking = nextToAsk(p); return render(); }
+  if (a === "unvote") { const mid = S.asking; return act(() => api("POST", "/api/poker/vote", {memberId:mid, value:""})); }
+  if (a === "record") {
+    const mid = S.asking; if (!mid || !p?.roundId || p.revealed) return;
+    const name = memberById(mid)?.name || "Teammate";
+    S.skipped.delete(mid);
+    const next = nextToAsk(p, mid);
+    if (await act(() => api("POST", "/api/poker/vote", {memberId:mid, value:b.dataset.v, recorded:true}), `Vote recorded for ${name}`)) { S.asking = next; render(); }
+    return;
+  }
+  if (a === "finish-retro" || a === "report-all") {
+    if (a === "report-all") { downloadFile("/api/report/retro.xlsx"); return toast("Downloading the Excel report for all sprints"); }
+    const sp = S.sprints.find(s => s.id === S.retroSprint); if (!sp) return;
+    if (!sp.retroFinishedAt && !await act(() => api("PATCH", "/api/c/sprints/" + sp.id, {retroFinishedAt:new Date().toISOString()}))) return;
+    downloadFile("/api/report/retro.xlsx?sprint=" + encodeURIComponent(sp.id));
+    return toast(`Downloading the ${sp.name} retrospective report`);
+  }
+  if (a === "invite") return inviteSheet();
+  if (a === "restore") return $("#restoreFile").click();
+  if (a === "add-member") return memberSheet(null);
+  if (a === "edit-member") return memberSheet(memberById(id));
+  if (a === "add-sprint") return sprintSheet(null);
+  if (a === "edit-sprint") return sprintSheet(S.sprints.find(s => s.id === id));
+  if (a === "open-retro") { S.retroSprint = id; return showTab("retro"); }
+  if (a === "rename-team") return openSheet("Team name", [{id:"team", label:"Name", value:S.meta?.teamName || "", required:true, full:true}], () => fv("team") ? act(() => api("PATCH", "/api/meta", {teamName:fv("team")}), "Renamed") : false);
+  if (a === "keep-sample") return act(() => api("PATCH", "/api/meta", {sample:false}));
+  if (a === "clear-sample") { if (!armed(b)) return; return act(() => api("POST", "/api/sample/clear"), "Sample data removed"); }
+  if (a === "vote-note") return act(() => api("POST", `/api/c/retroItems/${id}/vote`, {voter:voterKey()}));
+  if (a === "del-note") { if (!armed(b)) return; return act(() => api("DELETE", "/api/c/retroItems/" + id)); }
+  if (a === "cast") {
+    if (!p?.roundId || p.revealed || !S.me) return;
+    const v = b.dataset.v; S.myVote = v; render();
+    return act(() => api("POST", "/api/poker/vote", {memberId:S.me, value:v}));
+  }
+  if (a === "reveal") return act(() => api("POST", "/api/poker/reveal"));
+  if (a === "revote") return act(() => api("POST", "/api/poker/revote"));
+  if (a === "clear-table") return act(() => api("POST", "/api/poker/clear"));
+  if (a === "next-story") { const n = nextQueued(); if (n) return act(() => api("POST", "/api/poker/start", {storyId:n.id})); return; }
+  if (a === "estimate") return act(() => api("POST", "/api/poker/start", {storyId:id}));
+  if (a === "del-story") { if (!armed(b)) return; return act(() => api("DELETE", "/api/c/stories/" + id)); }
+  if (a === "use-avg" || a === "use-card") { S.useCard = a === "use-card"; return render(); }
+  if (a === "save-est") {
+    const st = stats(roundVotes()); if (!st) return;
+    const pts = S.useCard ? st.card : st.avg;
+    return act(() => api("POST", "/api/poker/save", {points:pts, average:st.avg, nearestCard:st.card, voteCount:st.n}), `Saved ${fmtPts(pts)} pts${p.storyKey ? " to " + p.storyKey : ""}`);
+  }
+  if (a === "del-manual") return act(() => api("POST", "/api/poker/vote", {memberId:id, value:""}));
+  if (a === "link-me") { const mid = $("#linkSel")?.value; if (mid) { setMe(mid); load(); } return; }
+});
+document.addEventListener("change", e => {
+  const t = e.target;
+  if (t.id === "retroSprint") { S.retroSprint = t.value; return render(); }
+  if (t.dataset.act === "owner") return act(() => api("PATCH", "/api/c/retroItems/" + t.dataset.id, {ownerId:t.value || null}));
+  if (t.dataset.act === "done") return act(() => api("PATCH", "/api/c/retroItems/" + t.dataset.id, {done:t.checked}));
+});
+$("#restoreFile").addEventListener("change", async e => {
+  const f = e.target.files[0]; e.target.value = ""; if (!f) return;
+  let data; try { data = JSON.parse(await f.text()); } catch { toast("That file isn't a Sprint Room backup."); return; }
+  act(() => api("POST", "/api/import", data), "Backup restored");
+});
+$$('form[data-form="retro"]').forEach(f => f.addEventListener("submit", async e => {
+  e.preventDefault();
+  const k = f.dataset.kind, input = $("#in-" + k), text = input.value.trim();
+  if (!text) return;
+  if (!S.retroSprint) { toast("Create a sprint first."); return; }
+  const body = {sprintId:S.retroSprint, kind:k, text, votes:[]};
+  if (k === "action") { body.ownerId = $("#in-action-owner").value || null; body.done = false; }
+  if (await act(() => api("POST", "/api/c/retroItems", body))) input.value = "";
+}));
+$("#newRound").addEventListener("submit", async e => {
+  e.preventDefault();
+  const title = $("#nr-title").value.trim(), key = $("#nr-key").value.trim();
+  if (!title) return;
+  const ok = await act(async () => {
+    const r = await api("POST", "/api/c/stories", {key, title, sprintId:currentSprint()?.id || null, points:null});
+    await api("POST", "/api/poker/start", {storyId:r.id});
+  });
+  if (ok) { $("#nr-title").value = ""; $("#nr-key").value = ""; }
+});
+$("#manualVote").addEventListener("submit", e => {
+  e.preventDefault();
+  const mid = $("#mv-member").value, v = $("#mv-value").value;
+  if (!mid || !S.poker?.roundId || S.poker.revealed) return;
+  act(() => api("POST", "/api/poker/vote", {memberId:mid, value:v, recorded:true}), `Recorded ${cardLabel(v)} for ${memberById(mid)?.name || "teammate"}`);
+});
+
+/* ---------- boot ---------- */
+{
+  const h = location.hash.slice(1);
+  const t = TABS.includes(h) ? h : store.get("sr-tab");
+  showTab(TABS.includes(t) ? t : "dashboard");
+}
+setInterval(() => { if (S.tab === "dashboard") render(); }, 60000);
+load();
+connect();
+</script>
+</body>
+</html>

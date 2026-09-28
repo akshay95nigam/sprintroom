@@ -1,0 +1,12 @@
+{
+  "name": "sprint-room",
+  "version": "1.1.0",
+  "description": "Scrum team tool: dashboard, sprints and meetings, retrospectives, and scrum poker with averaged story points.",
+  "main": "server.js",
+  "private": true,
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "start": "node server.js",
+    "build:win": "sh build.sh"
+  }
+}
