@@ -1,4 +1,4 @@
-SPRINT ROOM  v1.1.0  (Node.js edition)
+SPRINT ROOM  v1.2.0  (Node.js edition)
 ===================
 
 A scrum team tool: team dashboard, sprint and meeting schedule,
@@ -43,6 +43,29 @@ Sprint Room needs no internet connection. If your team can't reach
 your computer (remote call, locked-down network), run it only on your
 own computer and share your screen in Teams, Zoom or Meet. You can
 click "Cancel" on the firewall prompt in that case.
+
+
+START AND END A SPRINT
+----------------------
+The dashboard shows the current sprint with a "Start sprint" or
+"End sprint" button (also on the Sprints & meetings tab).
+ - Start sprint: marks the sprint as in progress. Starting before its
+   planned start date moves its dates and meetings earlier so the
+   sprint keeps its length.
+ - End sprint: asks for the sprint's KPIs:
+     Sprint velocity    story points completed (done) this sprint
+     Committed points   story points planned at sprint planning
+                        (pre-filled from scrum poker estimates)
+     Average cycle time days from starting a story to finishing it
+   You can correct them later with "Edit KPIs".
+Then press "Plan next sprint" to set up the next one.
+
+The dashboard's Sprint KPIs section shows velocity, average velocity
+(last 3 sprints, use it to plan), average cycle time and commitment
+reliability (completed / committed), each compared with the previous
+sprint, plus a velocity chart and a cycle time chart for the last 8
+sprints. Hover a chart for exact numbers, or press "Show as table".
+The Excel report's Summary sheet includes the same KPIs.
 
 
 SCRUM POKER

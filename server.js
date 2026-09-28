@@ -12,7 +12,7 @@ const { spawn } = require("node:child_process");
 const readline = require("node:readline");
 const { parseArgs } = require("node:util");
 
-const VERSION = "1.1.0";
+const VERSION = "1.2.0";
 const COLLECTIONS = new Set(["members", "sprints", "retroItems", "stories"]);
 const DECK = new Set(["0", "0.5", "1", "2", "3", "5", "8", "13", "21", "?", "coffee"]);
 const MAX_BODY = 256 * 1024;
@@ -361,7 +361,7 @@ function zip(files) { // files: [{name, data: Buffer|string}]
 const xmlEsc = v => String(v ?? "").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const colName = i => { let s = ""; for (i++; i > 0; i = Math.floor((i - 1) / 26)) s = String.fromCharCode(65 + ((i - 1) % 26)) + s; return s; };
 
-// Cell style ids (see STYLES): 0 normal, 1 header, 2 wrapped text, 3 title, 4 bold, 5 one-decimal number, 6 subtitle
+// Cell style ids (see STYLES): 0 normal, 1 header, 2 wrapped text, 3 title, 4 bold, 5 one-decimal number, 6 subtitle, 7 percent
 const STYLES = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
 <numFmts count="1"><numFmt numFmtId="164" formatCode="0.0"/></numFmts>
@@ -369,7 +369,7 @@ const STYLES = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF2B59C3"/><bgColor indexed="64"/></patternFill></fill></fills>
 <borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left/><right/><top/><bottom style="thin"><color rgb="FFD8DEE6"/></bottom><diagonal/></border></borders>
 <cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>
-<cellXfs count="7">
+<cellXfs count="8">
 <xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1"><alignment vertical="top"/></xf>
 <xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"><alignment vertical="center"/></xf>
 <xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf>
@@ -377,6 +377,7 @@ const STYLES = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <xf numFmtId="0" fontId="3" fillId="0" borderId="1" xfId="0" applyFont="1" applyBorder="1"><alignment vertical="top"/></xf>
 <xf numFmtId="164" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"><alignment vertical="top"/></xf>
 <xf numFmtId="0" fontId="4" fillId="0" borderId="0" xfId="0" applyFont="1"/>
+<xf numFmtId="9" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"><alignment vertical="top"/></xf>
 </cellXfs>
 <cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>
 </styleSheet>`;
@@ -397,7 +398,7 @@ function sheetXML(sh) {
   if (sh.title || sh.subtitle) row([]);
   const headerRow = r;
   row(sh.columns.map((col, i) => cell(i, col.header, 1)), 20);
-  for (const values of sh.rows) row(sh.columns.map((col, i) => cell(i, values[i], col.decimal ? 5 : col.bold ? 4 : col.wrap ? 2 : 0)));
+  for (const values of sh.rows) row(sh.columns.map((col, i) => cell(i, values[i], col.percent ? 7 : col.decimal ? 5 : col.bold ? 4 : col.wrap ? 2 : 0)));
   if (!sh.rows.length) row([cell(0, sh.empty || "Nothing recorded.", 6)]);
   if (sh.note) { row([]); row([cell(0, sh.note, 6)]); }
   const lastCol = colName(sh.columns.length - 1);
@@ -469,14 +470,19 @@ function retroReport(d, sprintId) {
     name: "Summary", title, subtitle,
     columns: [
       { header: "Sprint", width: 14, bold: true }, { header: "Dates", width: 26 }, { header: "Sprint goal", width: 46, wrap: true },
-      { header: "Retrospective", width: 22 }, { header: "Went well", width: 11 }, { header: "To improve", width: 11 },
+      { header: "Retrospective", width: 22 },
+      { header: "Committed pts", width: 14, decimal: true }, { header: "Velocity (pts done)", width: 18, decimal: true },
+      { header: "Reliability", width: 11, percent: true }, { header: "Avg cycle time (days)", width: 20, decimal: true },
+      { header: "Went well", width: 11 }, { header: "To improve", width: 11 },
       { header: "Action items", width: 12 }, { header: "Actions done", width: 13 }, { header: "Actions open", width: 13 },
       { header: "Stories estimated", width: 17 }, { header: "Story points", width: 13, decimal: true },
     ],
     rows: sprints.map(s => {
       const its = items.filter(r => r.sprintId === s.id), acts = its.filter(r => r.kind === "action");
       const est = stories.filter(x => x.sprintId === s.id && typeof x.points === "number");
+      const k = s.kpis || {}, num = v => (typeof v === "number" && isFinite(v) ? v : "");
       return [s.name, `${fmtDate(s.start)} to ${fmtDate(s.end)}`, s.goal || "", s.retroFinishedAt ? `Finished ${fmtDateTime(s.retroFinishedAt)}` : fmtDateTime(s.retro) || "Not scheduled",
+        num(k.committed), num(k.velocity), k.committed > 0 && typeof k.velocity === "number" ? k.velocity / k.committed : "", num(k.cycleTime),
         its.filter(r => r.kind === "well").length, its.filter(r => r.kind === "improve").length, acts.length,
         acts.filter(a => a.done).length, acts.filter(a => !a.done).length, est.length, est.reduce((a, x) => a + x.points, 0)];
     }),
@@ -537,8 +543,21 @@ function seed(store) {
   member("m5", "Aisha Karimi", "QA engineer", 6, "partial", "Mornings only this week", 5);
   member("m6", "Tom Lindqvist", "Full-stack engineer", 9, "away", "On leave this week", 6);
 
-  d.collections.sprints.s23 = { name: "Sprint 23", goal: "Ship saved cards for returning customers", start: day(lastS), end: day(lastE), standup: "09:30", planning: at(lastS, "10:00"), review: at(lastE, "14:00"), retro: at(lastE, "15:30"), sample: true, createdAt: "2026-01-01T09:00:00Z" };
-  d.collections.sprints.s24 = { name: "Sprint 24", goal: "Cut checkout drop-off on mobile by simplifying the address step", start: day(curS), end: day(curE), standup: "09:30", planning: at(curS, "10:00"), review: at(curE, "14:00"), retro: at(curE, "15:30"), sample: true, createdAt: "2026-01-02T09:00:00Z" };
+  const sprint = (id, name, goal, s, e, extra, created) =>
+    (d.collections.sprints[id] = { name, goal, start: day(s), end: day(e), standup: "09:30", planning: at(s, "10:00"), review: at(e, "14:00"), retro: at(e, "15:30"), sample: true, createdAt: created, ...extra });
+  const done = (e, committed, velocity, cycleTime) => ({ status: "completed", endedAt: new Date(e.getFullYear(), e.getMonth(), e.getDate(), 16).toISOString(), kpis: { committed, velocity, cycleTime, recordedAt: now() } });
+  const history = [
+    [19, "Launch guest checkout", 30, 24, 5.8],
+    [20, "Reduce payment failures on Android", 32, 27, 5.1],
+    [21, "Send order tracking emails", 34, 33, 4.6],
+    [22, "Accept gift cards at checkout", 36, 29, 4.9],
+  ];
+  history.forEach(([n, goal, committed, velocity, cycleTime], i) => {
+    const s = add(mon, -14 * (5 - i)), e = add(s, 11);
+    sprint(`s${n}`, `Sprint ${n}`, goal, s, e, done(e, committed, velocity, cycleTime), `2025-12-0${i + 1}T09:00:00Z`);
+  });
+  sprint("s23", "Sprint 23", "Ship saved cards for returning customers", lastS, lastE, done(lastE, 34, 32, 4.2), "2026-01-01T09:00:00Z");
+  sprint("s24", "Sprint 24", "Cut checkout drop-off on mobile by simplifying the address step", curS, curE, { status: "active", startedAt: new Date(curS.getFullYear(), curS.getMonth(), curS.getDate(), 10).toISOString() }, "2026-01-02T09:00:00Z");
 
   const votes = n => Array.from({ length: n }, (_, i) => `sample${i}`);
   const note = (id, kind, text, v, ownerId, done, n) => {

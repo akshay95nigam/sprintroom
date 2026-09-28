@@ -1,14 +1,14 @@
 # Sprint Room
 
-A scrum team tool for Windows: team dashboard, sprint and meeting schedule, retrospective board with an Excel report, and scrum poker where the average of everyone's votes becomes the story points.
+A scrum team tool for Windows: team dashboard with sprint KPI charts, sprint and meeting schedule, retrospective board with an Excel report, and scrum poker where the average of everyone's votes becomes the story points.
 
 It works offline, installs nothing and needs no accounts. The scrum master can run it on their own computer and share their screen, or teammates on the same network can join from their browsers.
 
 ## Download
 
-**[Latest release: Sprint Room 1.1.0 for Windows](https://github.com/akshay95nigam/sprintroom/releases/latest)** (64-bit Windows 10/11, 37 MB zip)
+**[Latest release: Sprint Room 1.2.0 for Windows](https://github.com/akshay95nigam/sprintroom/releases/latest)** (64-bit Windows 10/11, 37 MB zip)
 
-`SprintRoom-Windows.zip` in this repository is the earlier 1.0.0 build (Go, 3 MB). It doesn't have the screen-share scrum poker or the Excel report.
+`SprintRoom-Windows.zip` in this repository is the earlier 1.0.0 build (Go, 3 MB). It doesn't have the screen-share scrum poker, the Excel report or the sprint KPIs.
 
 ## Run it
 
@@ -23,10 +23,11 @@ On first launch Windows may show:
 
 ## Features
 
-- **Dashboard**: current sprint, progress, next meeting countdown, team availability, sprint load against capacity, and the last sprint's retrospective with open action items.
+- **Dashboard**: current sprint with **Start sprint** / **End sprint**, progress, next meeting countdown, team availability, sprint load against capacity, and the last sprint's retrospective with open action items.
+- **Sprint KPIs**: ending a sprint asks for its velocity, committed points and average cycle time. The dashboard shows KPI tiles (velocity, 3-sprint average velocity, average cycle time, commitment reliability, each compared with the previous sprint), a velocity chart (committed vs completed) and a cycle time trend, with hover details and a table view.
 - **Team**: members with role, availability and capacity.
 - **Sprints & meetings**: sprint dates and goal, plus planning, daily stand-up, review and retrospective times.
-- **Retrospective**: went well / to improve / action items, with +1 voting, owners and done tracking. **Finish retrospective & download Excel** produces an `.xlsx` report (Summary, Retro notes, Action items, Story estimates, Team), for one sprint or all of them.
+- **Retrospective**: went well / to improve / action items, with +1 voting, owners and done tracking. **Finish retrospective & download Excel** produces an `.xlsx` report (Summary with sprint KPIs, Retro notes, Action items, Story estimates, Team), for one sprint or all of them.
 - **Scrum poker**: Fibonacci deck (0, ½, 1, 2, 3, 5, 8, 13, 21, ?, ☕). In screen-share mode the scrum master asks each person in turn and clicks their card; cards stay face down until revealed. Or everyone votes on their own device. The average becomes the story's points, or round to the nearest card.
 
 ## Data

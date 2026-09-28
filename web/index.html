@@ -11,6 +11,7 @@
   --good:#23784A; --good-soft:#E1F2E7; --warn:#9A5C08; --warn-soft:#FBEFD9; --bad:#B3372F; --bad-soft:#F8E3E1;
   --av-l:86%; --shadow:0 1px 2px rgba(22,32,43,.06),0 6px 18px rgba(22,32,43,.06);
   --back-a:#2B59C3; --back-b:#3A68D2;
+  --c-commit:#6E8FDB; --c-done:#2B59C3; --hover:rgba(43,89,195,.07);
   --display:"Segoe UI Variable Display","Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
   --body:"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
   --mono:"Cascadia Mono",Consolas,ui-monospace,SFMono-Regular,Menlo,monospace;
@@ -23,6 +24,7 @@
     --good:#5CC98A; --good-soft:#15291F; --warn:#E3A54A; --warn-soft:#2C2112; --bad:#F07B72; --bad-soft:#321A18;
     --av-l:30%; --shadow:0 1px 2px rgba(0,0,0,.3);
     --back-a:#2F4FA0; --back-b:#3B5CB0;
+    --c-commit:#3E5BB0; --c-done:#6F8FEF; --hover:rgba(125,156,255,.09);
   }
 }
 :root[data-theme="dark"]{
@@ -32,6 +34,7 @@
   --good:#5CC98A; --good-soft:#15291F; --warn:#E3A54A; --warn-soft:#2C2112; --bad:#F07B72; --bad-soft:#321A18;
   --av-l:30%; --shadow:0 1px 2px rgba(0,0,0,.3);
   --back-a:#2F4FA0; --back-b:#3B5CB0;
+  --c-commit:#3E5BB0; --c-done:#6F8FEF; --hover:rgba(125,156,255,.09);
 }
 *{box-sizing:border-box}
 body{background:var(--ground);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;padding-inline:16px;padding-block:0 48px}
@@ -253,6 +256,55 @@ body{margin:0}
 .asking-line .big-name{font-family:var(--display);font-size:1.5rem;font-weight:700;line-height:1.1}
 .share-foot{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;align-items:center}
 .all-in{display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding:14px;border-radius:10px;background:var(--good-soft);color:var(--good);font-weight:600}
+.dash>.span-7{grid-column:span 7}.dash>.span-5{grid-column:span 5}
+.hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.hero-top .acts{display:flex;gap:8px;flex-wrap:wrap}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:980px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.tiles{grid-template-columns:1fr}}
+.tile{background:var(--surface-2);border:1px solid var(--line-2);border-radius:10px;padding:14px 16px;display:grid;gap:3px;align-content:start;position:relative;min-width:0}
+.tile .tl{font-size:.8rem;font-weight:600;color:var(--muted)}
+.tile .tv{display:flex;align-items:baseline;gap:6px}
+.tile .tv .n{font-family:var(--display);font-size:2.2rem;font-weight:600;line-height:1.1}
+.tile .tv .u{color:var(--muted);font-weight:600}
+.tile .ts{font-size:.8rem;color:var(--muted)}
+.tile .tsp{position:absolute;right:14px;top:14px}
+.kd{font-size:.8rem;font-weight:600;margin-top:2px}
+.kd.better{color:var(--good)}.kd.worse{color:var(--bad)}.kd.same{color:var(--muted)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.spark{display:block}
+.chart-sub{font-size:.82rem;color:var(--muted);margin-top:2px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.8rem;color:var(--muted);margin:2px 0 8px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend .sw{width:12px;height:12px;border-radius:3px}
+.legend .ln{width:16px;border-top:2px solid var(--c-done)}
+.legend .ln.ref{border-top:1.5px solid var(--ink);opacity:.7}
+.chart{position:relative;width:100%}
+.chart svg{display:block;width:100%;height:auto;overflow:visible;touch-action:pan-y}
+.chart .grid{stroke:var(--line-2);stroke-width:1}
+.chart .base{stroke:var(--line);stroke-width:1}
+.chart .tick,.chart .xl{fill:var(--muted);font-size:11px;font-family:var(--body);font-variant-numeric:tabular-nums}
+.chart .val{fill:var(--ink);font-size:12px;font-weight:700;font-family:var(--body);paint-order:stroke;stroke:var(--surface);stroke-width:3px}
+.chart .ref{stroke:var(--ink);stroke-width:1.5;opacity:.7}
+.chart .reflabel{fill:var(--ink);font-size:11px;font-weight:600;font-family:var(--body);paint-order:stroke;stroke:var(--surface);stroke-width:3px}
+.chart .ref,.chart .reflabel,.chart .val,.chart .xl,.chart .tick,.chart .mark{pointer-events:none}
+.chart .hit{fill:transparent;outline:none}
+.chart .hit:hover,.chart .hit:focus-visible{fill:var(--hover)}
+.chart .hit:focus-visible{stroke:var(--accent);stroke-width:1.5}
+.chart .pt{fill:transparent;outline:none}
+.chart .pt:focus-visible{stroke:var(--accent);stroke-width:1.5}
+.chart .xhair{stroke:var(--muted);stroke-width:1;pointer-events:none}
+.ctip{position:fixed;z-index:50;pointer-events:none;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:8px 11px;font-size:.82rem;min-width:160px;display:grid;gap:3px}
+.ctip .h{font-weight:700;margin-bottom:2px}
+.ctip .r{display:flex;align-items:center;gap:8px}
+.ctip .k{width:14px;border-top:3px solid;border-radius:2px;flex:none}
+.ctip .k.none{border-color:transparent}
+.ctip b{font-variant-numeric:tabular-nums}
+.ktable-wrap{overflow-x:auto}
+.ktable{width:100%;border-collapse:collapse;font-size:.88rem;font-variant-numeric:tabular-nums}
+.ktable th,.ktable td{padding:8px 10px;border-bottom:1px solid var(--line-2);text-align:left;white-space:nowrap}
+.ktable th{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.ktable .r{text-align:right}
 .conn{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:40;background:var(--warn-soft);color:var(--warn);border:1px solid var(--warn);padding:6px 14px;border-radius:99px;font-size:.85rem;font-weight:600}
 </style>
 </head>
@@ -416,6 +468,7 @@ body{margin:0}
   </div>
 </div>
 <div id="toast" class="toast" hidden></div>
+<div id="chartTip" class="ctip" role="status" hidden></div>
 
 <script>
 const $ = (s, r = document) => r.querySelector(s);
@@ -496,21 +549,45 @@ function rel(at) {
   return days === 1 ? "tomorrow" : `in ${days} days`;
 }
 const sprintsSorted = () => [...S.sprints].sort((a,b) => (a.start||"").localeCompare(b.start||""));
+// A sprint is planned, active or completed. Start/End sprint set it explicitly;
+// sprints from before those buttons existed fall back to their dates.
+function sprintStatus(s) {
+  if (s.status === "planned" || s.status === "active" || s.status === "completed") return s.status;
+  const t = today();
+  if (pd(s.end) < t) return "completed";
+  if (pd(s.start) <= t) return "active";
+  return "planned";
+}
 function currentSprint() {
-  const t = today(), list = sprintsSorted();
-  return list.find(s => pd(s.start) <= t && t <= pd(s.end)) || list.find(s => pd(s.start) > t) || list[list.length-1] || null;
+  const list = sprintsSorted();
+  return list.find(s => sprintStatus(s) === "active") || list.find(s => sprintStatus(s) === "planned") || list[list.length-1] || null;
 }
 function lastSprint() {
-  const cur = currentSprint(); if (!cur) return null;
-  const list = sprintsSorted().filter(s => s.end && s.end < cur.start);
+  const cur = currentSprint();
+  const list = sprintsSorted().filter(s => s !== cur && sprintStatus(s) === "completed" && (!cur || (s.start || "") <= (cur.start || "")));
   return list[list.length-1] || null;
 }
 function sprintState(s) {
-  const t = today();
-  if (pd(s.end) < t) return ["Finished","plain"];
-  if (pd(s.start) > t) return ["Upcoming","info"];
-  return ["In progress","good"];
+  const st = sprintStatus(s);
+  if (st === "completed") return ["Completed","plain"];
+  if (st === "active") return pd(s.end) < today() ? ["Overdue","warn"] : ["In progress","good"];
+  return ["Planned","info"];
 }
+const isoDay = x => `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;
+function sprintAction(s, size = "") {
+  const st = sprintStatus(s);
+  if (st === "active") return `<button class="btn primary ${size}" data-act="end-sprint" data-id="${esc(s.id)}" type="button">End sprint</button>`;
+  if (st === "planned") return `<button class="btn primary ${size}" data-act="start-sprint" data-id="${esc(s.id)}" type="button">Start sprint</button>`;
+  return `<button class="btn ${size}" data-act="end-sprint" data-id="${esc(s.id)}" type="button">${kpiOf(s) ? "Edit KPIs" : "Add KPIs"}</button>`;
+}
+
+/* ---------- KPIs ---------- */
+const kpiOf = s => (s.kpis && typeof s.kpis.velocity === "number" ? s.kpis : null);
+const kpiSprints = () => sprintsSorted().filter(kpiOf).slice(-8);
+const mean = a => (a.length ? a.reduce((x, y) => x + y, 0) / a.length : null);
+const reliability = k => (k.committed > 0 ? k.velocity / k.committed * 100 : null);
+const fmtNum = n => (Math.round(n * 10) / 10).toLocaleString(undefined, {maximumFractionDigits:1});
+const shortName = s => { const m = s.name.match(/(\d+)\s*$/); return m ? "S" + m[1] : s.name.slice(0, 6); };
 function ceremonies(sp) {
   if (!sp) return [];
   const ev = [];
@@ -564,7 +641,7 @@ function openSheet(title, fields, onSave, onDelete, saveLabel = "Save") {
     if (f.type === "html") return `<div class="full info">${f.html}</div>`;
     if (f.type === "select") return `<label class="${cls}">${esc(f.label)}<select id="${id}">${f.options.map(([v,l]) => `<option value="${esc(v)}"${v === (f.value ?? "") ? " selected" : ""}>${esc(l)}</option>`).join("")}</select></label>`;
     if (f.type === "textarea") return `<label class="${cls}">${esc(f.label)}<textarea id="${id}" maxlength="600">${esc(f.value)}</textarea></label>`;
-    return `<label class="${cls}">${esc(f.label)}<input id="${id}" type="${f.type || "text"}" value="${esc(f.value)}"${f.required ? " required" : ""}${f.min != null ? ` min="${f.min}"` : ""} maxlength="200"></label>`;
+    return `<label class="${cls}">${esc(f.label)}<input id="${id}" type="${f.type || "text"}" value="${esc(f.value)}"${f.required ? " required" : ""}${f.min != null ? ` min="${f.min}"` : ""}${f.step ? ` step="${f.step}"` : ""} maxlength="200"></label>`;
   }).join("");
   sheetSave = onSave; sheetDel = onDelete;
   $("#sheetSave").hidden = !onSave; $("#sheetSave").textContent = saveLabel;
@@ -609,29 +686,42 @@ function renderNow() {
 }
 
 function renderDashboard() {
+  hideTip();
   const el = $("#dash"), cur = currentSprint(), last = lastSprint();
   if (!cur && !S.members.length) {
     el.innerHTML = `<div class="span-12 empty"><h3 style="margin-bottom:6px">Set up your team</h3><p style="margin:0 0 12px">Add the people on your team and your first sprint. The dashboard fills in from there.</p><button class="btn primary" data-act="add-member" type="button">Add member</button> <button class="btn" data-act="add-sprint" type="button">New sprint</button></div>`;
     return;
   }
+  const curSt = cur ? sprintStatus(cur) : null;
   let html = "";
+  // sprint hero
   if (cur) {
     const s = pd(cur.start), e = pd(cur.end), t = today();
-    const total = workdays(s, e), done = t < s ? 0 : workdays(s, t > e ? e : t);
+    const total = workdays(s, e), done = curSt === "completed" ? total : t < s ? 0 : workdays(s, t > e ? e : t);
     const [stLabel, stCls] = sprintState(cur);
+    const eyebrow = curSt === "active" ? "Current sprint" : curSt === "planned" ? "Next sprint" : "Last sprint";
+    const acts = sprintAction(cur) + (curSt === "completed" ? `<button class="btn" data-act="add-sprint" type="button">Plan next sprint</button>` : "");
     html += `<div class="panel hero span-8">
-      <div class="eyebrow">Current sprint</div>
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px"><h2>${esc(cur.name)}</h2><span class="pill ${stCls}">${stLabel}</span></div>
+      <div class="hero-top"><div><div class="eyebrow">${eyebrow}</div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px"><h2>${esc(cur.name)}</h2><span class="pill ${stCls}">${stLabel}</span></div></div><div class="acts">${acts}</div></div>
       <p class="goal">${cur.goal ? esc(cur.goal) : '<span class="muted">No sprint goal yet.</span>'}</p>
-      <div class="hero-meta num"><span>${fmtDay(s)} → ${fmtDay(e)}</span><span>Working day ${Math.min(done,total)} of ${total}</span>${cur.standup ? `<span>Stand-up daily at ${esc(cur.standup)}</span>` : ""}</div>
-      <div class="bar" role="img" aria-label="${done} of ${total} working days elapsed"><span style="width:${total ? Math.round(Math.min(done,total)/total*100) : 0}%"></span></div>
+      <div class="hero-meta num"><span>${fmtDay(s)} → ${fmtDay(e)}</span><span>${curSt === "planned" ? `${total} working days` : `Working day ${Math.min(done,total)} of ${total}`}</span>${cur.standup ? `<span>Stand-up daily at ${esc(cur.standup)}</span>` : ""}</div>
+      <div class="bar" role="img" aria-label="${Math.min(done,total)} of ${total} working days elapsed"><span style="width:${total ? Math.round(Math.min(done,total)/total*100) : 0}%"></span></div>
     </div>`;
   } else {
     html += `<div class="panel span-8 empty">No sprints yet. <button class="link" data-act="add-sprint" type="button">Create the first sprint</button></div>`;
   }
+  // next meeting
   const nm = nextMeeting();
   html += nm ? `<div class="panel next span-4"><div class="eyebrow">Next meeting</div><div class="when">${esc(rel(nm.at))}</div><div class="what">${esc(nm.kind)}</div><div class="num" style="opacity:.85">${esc(fmtWhen(nm.at))}${nm.sprint ? " · " + esc(nm.sprint.name) : ""}</div></div>`
              : `<div class="panel span-4"><div class="eyebrow">Next meeting</div><p class="muted">Nothing scheduled. Add meeting times in <button class="link" data-goto="sprints" type="button">Sprints &amp; meetings</button>.</p></div>`;
+  // KPIs
+  const ks = kpiSprints();
+  html += kpiSection(ks, cur);
+  // team + meetings
+  const avail = S.members.filter(m => m.status !== "away").length;
+  html += `<div class="panel span-8"><div class="panel-head"><h3>Team <span class="muted num" style="font-weight:500">· ${avail} of ${S.members.length} available</span></h3><button class="btn ghost sm" data-goto="team" type="button">Manage</button></div>
+    ${S.members.length ? `<div class="members">${S.members.map(m => `<div class="member">${avatar(m)}<div><div class="n">${esc(m.name)}</div><div class="r">${esc(m.role || "Team member")}</div></div>${statusPill(m.status)}</div>`).join("")}</div>` : `<p class="muted">No members yet.</p>`}</div>`;
   if (cur) {
     const now = new Date();
     const stand = ceremonies(cur).filter(x => x.daily);
@@ -642,35 +732,33 @@ function renderDashboard() {
       ["Sprint review", pdt(cur.review)],
       ["Retrospective", pdt(cur.retro)],
     ];
-    html += `<div class="panel span-4"><div class="panel-head" style="margin-bottom:4px"><h3>Meetings this sprint</h3><button class="btn ghost sm" data-act="edit-sprint" data-id="${esc(cur.id)}" type="button">Edit</button></div><ul class="ceremonies">${rows.map(([k, at, extra]) => {
+    html += `<div class="panel span-4"><div class="panel-head" style="margin-bottom:4px"><h3>Meetings · ${esc(cur.name)}</h3><button class="btn ghost sm" data-act="edit-sprint" data-id="${esc(cur.id)}" type="button">Edit</button></div><ul class="ceremonies">${rows.map(([k, at, extra]) => {
       const pill = !at ? (k === "Daily stand-up" && stand.length ? '<span class="pill plain">Done</span>' : '<span class="pill plain">Not set</span>') : at < now ? '<span class="pill plain">Done</span>' : '<span class="pill info">Upcoming</span>';
       const d = k === "Daily stand-up" ? (at ? `Next: ${fmtWhen(at)}` : "No more this sprint") + (extra ? ` · ${extra}` : "") : fmtWhen(at);
       return `<li><div><div class="t">${k}</div><div class="d num">${esc(d)}</div></div>${pill}</li>`;
     }).join("")}</ul></div>`;
   }
-  const avail = S.members.filter(m => m.status !== "away").length;
-  html += `<div class="panel span-8"><div class="panel-head"><h3>Team <span class="muted num" style="font-weight:500">· ${avail} of ${S.members.length} available</span></h3><button class="btn ghost sm" data-goto="team" type="button">Manage</button></div>
-    ${S.members.length ? `<div class="members">${S.members.map(m => `<div class="member">${avatar(m)}<div><div class="n">${esc(m.name)}</div><div class="r">${esc(m.role || "Team member")}</div></div>${statusPill(m.status)}</div>`).join("")}</div>` : `<p class="muted">No members yet.</p>`}</div>`;
+  // load + retro
+  const rs = cur && curSt === "completed" ? cur : (last || cur);
   if (cur) {
     const st = S.stories.filter(s => s.sprintId === cur.id);
     const pts = st.reduce((a,s) => a + (typeof s.points === "number" ? s.points : 0), 0);
     const cap = S.members.filter(m => m.status !== "away").reduce((a,m) => a + (Number(m.capacity) || 0), 0);
     const queued = st.filter(s => typeof s.points !== "number").length;
     const pct = cap ? Math.round(pts / cap * 100) : 0;
-    html += `<div class="panel span-4"><div class="eyebrow" style="margin-bottom:10px">Sprint load</div>
+    html += `<div class="panel ${rs ? "span-4" : "span-12"}"><div class="eyebrow" style="margin-bottom:10px">Sprint load · ${esc(cur.name)}</div>
       <div class="load-row"><span class="big num">${fmtPts(pts)}</span><span class="muted num">of ${fmtPts(cap)} pts capacity</span></div>
       <div class="bar ${pct > 100 ? "over" : ""}"><span style="width:${Math.min(pct,100)}%"></span></div>
       <p class="hint">${pct > 100 ? `Over capacity by ${fmtPts(pts - cap)} pts. ` : ""}${st.length - queued} estimated ${st.length - queued === 1 ? "story" : "stories"}${queued ? ` · ${queued} waiting for scrum poker` : ""}.</p>
       ${queued ? `<button class="btn sm" data-goto="poker" type="button" style="margin-top:8px">Estimate in scrum poker</button>` : ""}</div>`;
   }
-  const rs = last || cur;
   if (rs) {
     const items = S.retro.filter(r => r.sprintId === rs.id);
     const top = k => items.filter(r => r.kind === k).sort((a,b) => (b.votes?.length||0) - (a.votes?.length||0)).slice(0, 3);
     const actions = items.filter(r => r.kind === "action");
     const open = actions.filter(a => !a.done).length;
     const li = r => `<li><span>${esc(r.text)}</span><span class="votes-chip">+${r.votes?.length || 0}</span></li>`;
-    html += `<div class="panel span-12"><div class="panel-head"><div><div class="eyebrow">${last ? "From the last sprint" : "This sprint"}</div><h3>${esc(rs.name)} retrospective</h3></div><button class="btn sm" data-act="open-retro" data-id="${esc(rs.id)}" type="button">Open retrospective</button></div>
+    html += `<div class="panel ${cur ? "span-8" : "span-12"}"><div class="panel-head"><div><div class="eyebrow">${rs === cur && curSt !== "completed" ? "This sprint" : "From the last sprint"}</div><h3>${esc(rs.name)} retrospective</h3></div><button class="btn sm" data-act="open-retro" data-id="${esc(rs.id)}" type="button">Open retrospective</button></div>
       ${items.length ? `<div class="retro-sum">
         <div><h4 class="k-well">Went well</h4><ul>${top("well").map(li).join("") || '<li class="muted">Nothing noted</li>'}</ul></div>
         <div><h4 class="k-improve">To improve</h4><ul>${top("improve").map(li).join("") || '<li class="muted">Nothing noted</li>'}</ul></div>
@@ -678,6 +766,160 @@ function renderDashboard() {
       </div>` : `<p class="muted">No retrospective notes for ${esc(rs.name)} yet.</p>`}</div>`;
   }
   el.innerHTML = html;
+  if (ks.length) { drawVelocity($("#velChart"), ks); drawCycle($("#ctChart"), ks); }
+}
+
+function kpiDelta(cur, prev, unit, goodWhenUp, prevName) {
+  if (cur == null || prev == null) return `<div class="kd same">First sprint with KPIs</div>`;
+  const d = Math.round((cur - prev) * 10) / 10;
+  if (d === 0) return `<div class="kd same">No change vs ${esc(prevName)}</div>`;
+  const better = (d > 0) === goodWhenUp;
+  return `<div class="kd ${better ? "better" : "worse"}"><span aria-hidden="true">${d > 0 ? "▲" : "▼"}</span> ${d > 0 ? "+" : "−"}${fmtNum(Math.abs(d))}${unit} vs ${esc(prevName)}<span class="sr"> (${better ? "better" : "worse"})</span></div>`;
+}
+function spark(vals) {
+  if (vals.length < 2) return "";
+  const w = 84, h = 30, p = 4, mn = Math.min(...vals), mx = Math.max(...vals), r = mx - mn || 1;
+  const pts = vals.map((v, i) => [p + i * (w - 2 * p) / (vals.length - 1), h - p - (v - mn) / r * (h - 2 * p)]);
+  const [lx, ly] = pts[pts.length - 1];
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-hidden="true"><polyline points="${pts.map(q => q.map(n => n.toFixed(1)).join(",")).join(" ")}" fill="none" stroke="var(--muted)" stroke-opacity=".55" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="3.5" fill="var(--c-done)"/></svg>`;
+}
+const kpiTile = (label, value, unit, sub, delta, sp) => `<div class="tile"><div class="tl">${label}</div><div class="tv"><span class="n">${value}</span>${unit ? `<span class="u">${unit}</span>` : ""}</div><div class="ts">${esc(sub)}</div>${delta}${sp ? `<div class="tsp">${sp}</div>` : ""}</div>`;
+
+function kpiSection(ks, cur) {
+  const endBtn = cur && sprintStatus(cur) === "active" ? sprintAction(cur, "sm") : "";
+  if (!ks.length) return `<div class="panel span-12"><div class="panel-head"><div><div class="eyebrow">Sprint KPIs</div><h3>Velocity and cycle time</h3></div>${endBtn}</div><p class="muted" style="margin:0">When you end a sprint, Sprint Room asks for its velocity and average cycle time. KPI tiles and trend charts appear here after the first sprint ends.</p></div>`;
+  const L = ks[ks.length - 1], P = ks[ks.length - 2], l = L.kpis, p = P?.kpis;
+  const last3 = ks.slice(-3), avg3 = mean(last3.map(s => s.kpis.velocity));
+  const relL = reliability(l), relP = p ? reliability(p) : null;
+  const cycles = ks.filter(s => typeof s.kpis.cycleTime === "number");
+  const tiles = [
+    kpiTile("Velocity", fmtNum(l.velocity), "pts", `Completed in ${L.name}`, kpiDelta(l.velocity, p?.velocity, " pts", true, P?.name), spark(ks.map(s => s.kpis.velocity))),
+    kpiTile("Average velocity", fmtNum(avg3), "pts", `Last ${last3.length} ${last3.length === 1 ? "sprint" : "sprints"}. Use it to plan the next sprint.`, `<div class="kd same">${last3.map(s => shortName(s)).join(" · ")}</div>`, ""),
+    kpiTile("Average cycle time", typeof l.cycleTime === "number" ? fmtNum(l.cycleTime) : "—", typeof l.cycleTime === "number" ? "days" : "", `Start to done, ${L.name}. Lower is better.`, kpiDelta(l.cycleTime ?? null, p?.cycleTime ?? null, " days", false, P?.name), spark(cycles.map(s => s.kpis.cycleTime))),
+    kpiTile("Commitment reliability", relL == null ? "—" : String(Math.round(relL)), relL == null ? "" : "%", relL == null ? "No committed points recorded" : `${fmtNum(l.velocity)} of ${fmtNum(l.committed)} committed pts done`, relL != null && relP != null ? kpiDelta(Math.round(relL), Math.round(relP), "%", true, P.name) : `<div class="kd same">${relL == null ? "" : "First sprint with a commitment"}</div>`, ""),
+  ].join("");
+  const table = S.kpiTable ? `<div class="panel span-12"><div class="panel-head"><h3>KPI data</h3><button class="btn ghost sm" data-act="kpi-table" type="button">Hide table</button></div><div class="ktable-wrap"><table class="ktable"><thead><tr><th>Sprint</th><th>Dates</th><th class="r">Committed</th><th class="r">Velocity</th><th class="r">Reliability</th><th class="r">Avg cycle time</th></tr></thead><tbody>${ks.slice().reverse().map(s => { const k = s.kpis, r = reliability(k); return `<tr><td>${esc(s.name)}</td><td>${fmtDay(pd(s.start))} → ${fmtDay(pd(s.end))}</td><td class="r">${k.committed != null ? fmtNum(k.committed) + " pts" : "—"}</td><td class="r">${fmtNum(k.velocity)} pts</td><td class="r">${r != null ? Math.round(r) + "%" : "—"}</td><td class="r">${typeof k.cycleTime === "number" ? fmtNum(k.cycleTime) + " days" : "—"}</td></tr>`; }).join("")}</tbody></table></div></div>` : "";
+  return `<div class="panel span-12"><div class="panel-head"><div><div class="eyebrow">Sprint KPIs</div><h3>Delivery trends · last ${ks.length} ${ks.length === 1 ? "sprint" : "sprints"}</h3></div><div style="display:flex;gap:8px;flex-wrap:wrap">${S.kpiTable ? "" : `<button class="btn ghost sm" data-act="kpi-table" type="button">Show as table</button>`}${endBtn}</div></div><div class="tiles">${tiles}</div></div>
+    <div class="panel span-7"><h3>Sprint velocity</h3><div class="chart-sub">Story points completed vs committed, per sprint</div>
+      <div class="legend" style="margin-top:10px"><span><i class="sw" style="background:var(--c-done)"></i>Completed (velocity)</span><span><i class="sw" style="background:var(--c-commit)"></i>Committed</span>${ks.length >= 2 ? `<span><i class="ln ref"></i>3-sprint average · ${fmtNum(avg3)} pts</span>` : ""}</div>
+      <div class="chart" id="velChart"></div></div>
+    <div class="panel span-5"><h3>Average cycle time</h3><div class="chart-sub">Days from starting a story to done. Lower is better.</div>
+      <div class="legend" style="margin-top:10px"><span><i class="ln"></i>Cycle time</span>${cycles.length >= 2 ? `<span><i class="ln ref"></i>Average of these sprints · ${fmtNum(mean(cycles.map(s => s.kpis.cycleTime)))} days</span>` : ""}</div>
+      <div class="chart" id="ctChart"></div></div>${table}`;
+}
+
+/* ---------- charts (inline SVG, drawn at the container's real width) ---------- */
+const CH = {H:240, m:{l:38, r:16, t:22, b:30}};
+function geom(el, n) {
+  const W = Math.max(260, Math.floor(el.clientWidth || 520)), {H, m} = CH;
+  const pw = W - m.l - m.r, ph = H - m.t - m.b;
+  return {W, H, m, pw, ph, band:pw / n};
+}
+function niceStep(max, target = 4) {
+  const raw = max / target, mag = 10 ** Math.floor(Math.log10(raw)), n = raw / mag;
+  return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10) * mag;
+}
+function barPath(x, yTop, w, base) {
+  const h = base - yTop; if (h <= 0) return "";
+  const r = Math.min(4, h, w / 2);
+  return `M${x},${base}V${yTop + r}Q${x},${yTop} ${x + r},${yTop}H${x + w - r}Q${x + w},${yTop} ${x + w},${yTop + r}V${base}Z`;
+}
+function axes(g, top, step, y) {
+  let s = "";
+  for (let v = 0; v <= top + 1e-9; v += step) s += `<line class="${v === 0 ? "base" : "grid"}" x1="${g.m.l}" x2="${g.W - g.m.r}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}"/><text class="tick" x="${g.m.l - 8}" y="${(y(v) + 4).toFixed(1)}" text-anchor="end">${fmtNum(v)}</text>`;
+  return s;
+}
+function showTip(title, rows, x, y) {
+  const t = $("#chartTip"); t.replaceChildren();
+  const h = document.createElement("div"); h.className = "h"; h.textContent = title; t.append(h);
+  for (const [color, value, label] of rows) {
+    const r = document.createElement("div"); r.className = "r";
+    const k = document.createElement("span"); k.className = "k" + (color ? "" : " none"); if (color) k.style.borderColor = color;
+    const b = document.createElement("b"); b.textContent = value;
+    const l = document.createElement("span"); l.className = "muted"; l.textContent = label;
+    r.append(k, b, l); t.append(r);
+  }
+  t.hidden = false;
+  const w = t.offsetWidth, hh = t.offsetHeight;
+  let left = x + 14, top = y - hh - 12;
+  if (left + w > innerWidth - 8) left = x - w - 14;
+  if (top < 8) top = y + 16;
+  t.style.left = Math.max(8, left) + "px"; t.style.top = top + "px";
+}
+function hideTip() { const t = $("#chartTip"); if (t) t.hidden = true; }
+
+function drawVelocity(el, ks) {
+  const n = ks.length, g = geom(el, n), {W, H, m, ph, band} = g;
+  const max = Math.max(1, ...ks.map(s => Math.max(s.kpis.velocity, s.kpis.committed || 0)));
+  const step = niceStep(max), top = Math.ceil(max * 1.12 / step) * step;
+  const y = v => m.t + ph - v / top * ph, base = y(0);
+  const bw = Math.max(6, Math.min(24, (band - 18) / 2)), gap = 2;
+  const avg3 = mean(ks.slice(-3).map(s => s.kpis.velocity)), L = ks[n - 1];
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Sprint velocity for ${esc(ks[0].name)} to ${esc(L.name)}. ${esc(L.name)} completed ${fmtNum(L.kpis.velocity)} points.">` + axes(g, top, step, y);
+  ks.forEach((sp, i) => {
+    const k = sp.kpis, cx = m.l + band * (i + .5);
+    s += `<rect class="hit" data-i="${i}" x="${(m.l + band * i + 2).toFixed(1)}" y="${m.t - 6}" width="${(band - 4).toFixed(1)}" height="${ph + 6}" rx="6" tabindex="0" aria-label="${esc(sp.name)}: ${fmtNum(k.velocity)} points completed${k.committed != null ? ` of ${fmtNum(k.committed)} committed` : ""}"/>`;
+    if (k.committed > 0) s += `<path class="mark" d="${barPath(cx - gap / 2 - bw, y(k.committed), bw, base)}" fill="var(--c-commit)"/>`;
+    s += `<path class="mark" d="${barPath(cx + gap / 2, y(k.velocity), bw, base)}" fill="var(--c-done)"/>`;
+    s += `<text class="xl" x="${cx.toFixed(1)}" y="${H - 10}" text-anchor="middle">${esc(band >= 70 ? sp.name : shortName(sp))}</text>`;
+  });
+  if (n >= 2) s += `<line class="ref" x1="${m.l}" x2="${W - m.r}" y1="${y(avg3).toFixed(1)}" y2="${y(avg3).toFixed(1)}"/>`;
+  const lx = m.l + band * (n - .5) + gap / 2 + bw / 2;
+  s += `<text class="val" x="${lx.toFixed(1)}" y="${(y(L.kpis.velocity) - 7).toFixed(1)}" text-anchor="middle">${fmtNum(L.kpis.velocity)}</text></svg>`;
+  el.innerHTML = s;
+  el.querySelectorAll(".hit").forEach(r => {
+    const sp = ks[+r.dataset.i], k = sp.kpis, rel = reliability(k);
+    const rows = [["var(--c-done)", `${fmtNum(k.velocity)} pts`, "completed"]];
+    if (k.committed != null) rows.push(["var(--c-commit)", `${fmtNum(k.committed)} pts`, "committed"]);
+    if (rel != null) rows.push([null, `${Math.round(rel)}%`, "of the commitment done"]);
+    r.addEventListener("pointermove", e => showTip(sp.name, rows, e.clientX, e.clientY));
+    r.addEventListener("pointerleave", hideTip);
+    r.addEventListener("focus", () => { const b = r.getBoundingClientRect(); showTip(sp.name, rows, b.left + b.width / 2, b.top + 30); });
+    r.addEventListener("blur", hideTip);
+  });
+}
+
+function drawCycle(el, ks) {
+  const pts = ks.filter(s => typeof s.kpis.cycleTime === "number");
+  if (!pts.length) { el.innerHTML = `<p class="muted" style="margin:24px 0">No cycle times recorded yet.</p>`; return; }
+  const n = pts.length, g = geom(el, n), {W, H, m, ph, band} = g;
+  const vals = pts.map(s => s.kpis.cycleTime), max = Math.max(1, ...vals);
+  const step = niceStep(max), top = Math.ceil(max * 1.2 / step) * step;
+  const y = v => m.t + ph - v / top * ph, x = i => m.l + band * (i + .5), base = y(0);
+  const avg = mean(vals), last = vals[n - 1];
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Average cycle time for ${esc(pts[0].name)} to ${esc(pts[n - 1].name)}. Latest ${fmtNum(last)} days.">` + axes(g, top, step, y);
+  s += `<path class="mark" d="M${x(0).toFixed(1)},${base.toFixed(1)}${vals.map((v, i) => `L${x(i).toFixed(1)},${y(v).toFixed(1)}`).join("")}L${x(n - 1).toFixed(1)},${base.toFixed(1)}Z" fill="var(--c-done)" fill-opacity=".1"/>`;
+  if (n >= 2) s += `<line class="ref" x1="${m.l}" x2="${W - m.r}" y1="${y(avg).toFixed(1)}" y2="${y(avg).toFixed(1)}"/>`;
+  s += `<polyline class="mark" points="${vals.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ")}" fill="none" stroke="var(--c-done)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+  s += `<line class="xhair" x1="0" x2="0" y1="${m.t}" y2="${base.toFixed(1)}" visibility="hidden"/>`;
+  s += `<rect class="overlay" x="${m.l}" y="${m.t}" width="${W - m.l - m.r}" height="${ph}" fill="transparent"/>`;
+  pts.forEach((sp, i) => {
+    s += `<circle class="mark" cx="${x(i).toFixed(1)}" cy="${y(vals[i]).toFixed(1)}" r="4" fill="var(--c-done)" stroke="var(--surface)" stroke-width="2"/>`;
+    s += `<circle class="pt" data-i="${i}" cx="${x(i).toFixed(1)}" cy="${y(vals[i]).toFixed(1)}" r="12" tabindex="0" aria-label="${esc(sp.name)}: ${fmtNum(vals[i])} days average cycle time"/>`;
+    s += `<text class="xl" x="${x(i).toFixed(1)}" y="${H - 10}" text-anchor="middle">${esc(band >= 70 ? sp.name : shortName(sp))}</text>`;
+  });
+  const ly = y(last), penalty = side => (n >= 2 && (side < 0 ? vals[n - 2] > last : vals[n - 2] < last) ? 1 : 0) + (n >= 2 && Math.abs(y(avg) - ly) < 22 && (side < 0 ? y(avg) <= ly : y(avg) >= ly) ? 2 : 0) + (side > 0 && ly + 22 > base ? 4 : 0) + (side < 0 && ly - 18 < m.t - 14 ? 4 : 0);
+  const below = penalty(1) < penalty(-1);
+  s += `<text class="val" x="${x(n - 1).toFixed(1)}" y="${(below ? ly + 21 : ly - 12).toFixed(1)}" text-anchor="middle">${fmtNum(last)} d</text></svg>`;
+  el.innerHTML = s;
+  const svg = el.querySelector("svg"), xh = el.querySelector(".xhair");
+  const rows = i => {
+    const out = [["var(--c-done)", `${fmtNum(vals[i])} days`, "average cycle time"]];
+    if (i > 0) { const d = Math.round((vals[i] - vals[i - 1]) * 10) / 10; out.push([null, d === 0 ? "No change" : `${d > 0 ? "+" : "−"}${fmtNum(Math.abs(d))} days`, `vs ${pts[i - 1].name}${d < 0 ? " (faster)" : d > 0 ? " (slower)" : ""}`]); }
+    return out;
+  };
+  const focusAt = (i, cx, cy) => { xh.setAttribute("x1", x(i)); xh.setAttribute("x2", x(i)); xh.setAttribute("visibility", "visible"); showTip(pts[i].name, rows(i), cx, cy); };
+  const clear = () => { xh.setAttribute("visibility", "hidden"); hideTip(); };
+  svg.addEventListener("pointermove", e => {
+    const r = svg.getBoundingClientRect(), px = (e.clientX - r.left) * (W / r.width), py = (e.clientY - r.top) * (H / r.height);
+    if (px < m.l || px > W - m.r || py < m.t - 10 || py > base + 4) return clear();
+    focusAt(Math.min(n - 1, Math.max(0, Math.round((px - m.l) / band - .5))), e.clientX, e.clientY);
+  });
+  svg.addEventListener("pointerleave", clear);
+  el.querySelectorAll(".pt").forEach(c => {
+    c.addEventListener("focus", () => { const b = c.getBoundingClientRect(); focusAt(+c.dataset.i, b.left + b.width / 2, b.top); });
+    c.addEventListener("blur", clear);
+  });
 }
 
 function renderTeam() {
@@ -699,8 +941,9 @@ function renderSprints() {
     return `<div class="row"><div class="sprint-badge ${cur && cur.id === s.id ? "current" : ""}">${esc(num)}</div>
       <div><div class="title">${esc(s.name)} <span class="pill ${c}" style="vertical-align:2px">${l}</span></div>
         <div class="sub num"><span>${fmtDay(pd(s.start))} → ${fmtDay(pd(s.end))}</span>${s.goal ? `<span>${esc(s.goal)}</span>` : ""}</div>
-        <div class="sub num" style="margin-top:4px"><span>Planning: ${esc(fmtWhen(pdt(s.planning)))}</span><span>Stand-up: ${s.standup ? esc(s.standup) + " weekdays" : "Not set"}</span><span>Review: ${esc(fmtWhen(pdt(s.review)))}</span><span>Retro: ${esc(fmtWhen(pdt(s.retro)))}</span></div></div>
-      <div class="right"><button class="btn sm" data-act="edit-sprint" data-id="${esc(s.id)}" type="button">Edit</button></div></div>`;
+        <div class="sub num" style="margin-top:4px"><span>Planning: ${esc(fmtWhen(pdt(s.planning)))}</span><span>Stand-up: ${s.standup ? esc(s.standup) + " weekdays" : "Not set"}</span><span>Review: ${esc(fmtWhen(pdt(s.review)))}</span><span>Retro: ${esc(fmtWhen(pdt(s.retro)))}</span></div>
+        ${kpiOf(s) ? `<div class="sub num" style="margin-top:4px;color:var(--ink)"><span>Velocity <strong>${fmtNum(s.kpis.velocity)} pts</strong></span>${s.kpis.committed != null ? `<span>Committed ${fmtNum(s.kpis.committed)} pts</span>` : ""}${typeof s.kpis.cycleTime === "number" ? `<span>Avg cycle time <strong>${fmtNum(s.kpis.cycleTime)} days</strong></span>` : ""}</div>` : ""}</div>
+      <div class="right">${sprintAction(s, "sm")}<button class="btn sm" data-act="edit-sprint" data-id="${esc(s.id)}" type="button">Edit</button></div></div>`;
   }).join("");
 }
 
@@ -882,8 +1125,38 @@ function sprintSheet(sp) {
     const body = {name:fv("name"), goal:fv("goal"), start:fv("start"), end:fv("end"), standup:fv("standup"), planning:fv("planning"), review:fv("review"), retro:fv("retro")};
     if (!body.name || !body.start || !body.end) { toast("A sprint needs a name, start date and end date."); return false; }
     if (body.end < body.start) { toast("The end date is before the start date."); return false; }
-    return sp ? act(() => api("PATCH", "/api/c/sprints/" + sp.id, body), "Sprint saved") : act(() => api("POST", "/api/c/sprints", body), `${body.name} created`);
+    return sp ? act(() => api("PATCH", "/api/c/sprints/" + sp.id, body), "Sprint saved") : act(() => api("POST", "/api/c/sprints", {...body, status:"planned"}), `${body.name} created`);
   }, sp ? () => act(() => api("DELETE", "/api/c/sprints/" + sp.id), `${sp.name} deleted`) : null);
+}
+function kpiSheet(sp) {
+  const ending = sprintStatus(sp) !== "completed";
+  const planned = Math.round(S.stories.filter(x => x.sprintId === sp.id && typeof x.points === "number").reduce((a, x) => a + x.points, 0) * 10) / 10;
+  openSheet(ending ? `End ${sp.name}` : `${sp.name} KPIs`, [
+    {type:"html", html: ending ? `<p>Record how ${esc(sp.name)} went. These numbers feed the KPI tiles and charts on the dashboard.</p>` : `<p>Update the KPIs for ${esc(sp.name)}. The dashboard charts update straight away.</p>`},
+    {id:"velocity", label:"Sprint velocity (story points completed)", type:"number", min:0, step:"any", value:sp.kpis?.velocity ?? "", required:true},
+    {id:"committed", label:"Story points committed at planning", type:"number", min:0, step:"any", value:sp.kpis?.committed ?? (planned || "")},
+    {id:"cycle", label:"Average cycle time (days)", type:"number", min:0, step:"any", value:sp.kpis?.cycleTime ?? "", required:true, full:true},
+    {type:"html", html:`<p class="hint" style="margin:0">Velocity counts only stories that met your definition of done. Cycle time is the average number of days from starting work on a story to finishing it. ${planned && sp.kpis?.committed == null ? `Committed is pre-filled with the ${fmtNum(planned)} points estimated in scrum poker for this sprint.` : ""}</p>`},
+  ], () => {
+    const velocity = parseFloat(fv("velocity")), committed = parseFloat(fv("committed")), cycleTime = parseFloat(fv("cycle"));
+    if (!(velocity >= 0)) { toast("Enter the sprint velocity: story points completed, 0 or more."); return false; }
+    if (!(cycleTime >= 0)) { toast("Enter the average cycle time in days."); return false; }
+    const body = {kpis:{velocity, committed: committed >= 0 ? committed : null, cycleTime, recordedAt:new Date().toISOString()}};
+    if (ending) Object.assign(body, {status:"completed", endedAt:new Date().toISOString()});
+    return act(() => api("PATCH", "/api/c/sprints/" + sp.id, body), ending ? `${sp.name} ended: ${fmtNum(velocity)} pts velocity, ${fmtNum(cycleTime)} days cycle time` : "KPIs saved");
+  }, null, ending ? "End sprint" : "Save KPIs");
+}
+async function startSprint(sp) {
+  const other = S.sprints.find(x => x.id !== sp.id && sprintStatus(x) === "active");
+  if (other) return toast(`End ${other.name} before starting ${sp.name}.`);
+  const body = {status:"active", startedAt:new Date().toISOString()};
+  // Starting early moves the whole sprint (dates and meetings) so it keeps its length.
+  const shift = Math.round((pd(sp.start) - today()) / 864e5);
+  if (shift > 0) {
+    const move = v => { if (!v) return v; const [d, tm] = v.split("T"); const x = pd(d); x.setDate(x.getDate() - shift); return isoDay(x) + (tm ? "T" + tm : ""); };
+    for (const k of ["start", "end", "planning", "review", "retro"]) if (sp[k]) body[k] = move(sp[k]);
+  }
+  return act(() => api("PATCH", "/api/c/sprints/" + sp.id, body), shift > 0 ? `${sp.name} started ${shift} ${shift === 1 ? "day" : "days"} early. Its dates and meetings moved to match.` : `${sp.name} started`);
 }
 function whoSheet() {
   openSheet("Who are you?", [
@@ -931,6 +1204,9 @@ document.addEventListener("click", async e => {
   if (a === "edit-member") return memberSheet(memberById(id));
   if (a === "add-sprint") return sprintSheet(null);
   if (a === "edit-sprint") return sprintSheet(S.sprints.find(s => s.id === id));
+  if (a === "start-sprint") { const sp = S.sprints.find(s => s.id === id); if (sp) startSprint(sp); return; }
+  if (a === "end-sprint") { const sp = S.sprints.find(s => s.id === id); if (sp) kpiSheet(sp); return; }
+  if (a === "kpi-table") { S.kpiTable = !S.kpiTable; return render(); }
   if (a === "open-retro") { S.retroSprint = id; return showTab("retro"); }
   if (a === "rename-team") return openSheet("Team name", [{id:"team", label:"Name", value:S.meta?.teamName || "", required:true, full:true}], () => fv("team") ? act(() => api("PATCH", "/api/meta", {teamName:fv("team")}), "Renamed") : false);
   if (a === "keep-sample") return act(() => api("PATCH", "/api/meta", {sample:false}));
@@ -1001,6 +1277,7 @@ $("#manualVote").addEventListener("submit", e => {
   showTab(TABS.includes(t) ? t : "dashboard");
 }
 setInterval(() => { if (S.tab === "dashboard") render(); }, 60000);
+{ let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { if (S.tab === "dashboard") render(); }, 150); }); }
 load();
 connect();
 </script>
